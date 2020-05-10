@@ -15,7 +15,7 @@ import (
 
 var (
 	chaosKey = flag.String("chaos-key", "", "Chaos key for API")
-	domain   = flag.String("domain", "", "Domain contains domain to find subs for")
+	domain   = flag.String("d", "", "Domain contains domain to find subs for")
 	count    = flag.Bool("count", false, "Show statistics for the specified domain")
 )
 
