@@ -148,5 +148,5 @@ func uploadFile() {
 		log.Fatalf("Could not finish request: %d statuscode\n", resp.StatusCode)
 	}
 
-	log.Println("File uploaded")
+	log.Println("File uploaded succesfully, it is processed and subdomains with valid records will be updated to chaos dataset.")
 }
