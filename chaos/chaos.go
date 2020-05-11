@@ -87,7 +87,7 @@ func getDomainStats() {
 		log.Fatalf("Could not unmarshal result: %s\n", err)
 	}
 
-	fmt.Println("Subdomains", r["subdomains"])
+	fmt.Println (r["subdomains"])
 }
 
 type result struct {
@@ -148,5 +148,5 @@ func uploadFile() {
 		log.Fatalf("Could not finish request: %d statuscode\n", resp.StatusCode)
 	}
 
-	log.Println("File uploaded succesfully, it is processed and subdomains with valid records will be updated to chaos dataset.")
+	log.Println("File processed successfully and subdomains with valid records will be updated to chaos dataset.")
 }
