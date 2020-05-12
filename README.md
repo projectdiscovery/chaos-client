@@ -5,13 +5,13 @@ Go client to communicate with Chaos DNS endpoint.
 ## Installation:- 
 
 ```bash
-GO111MODULE=on go get -u github.com/projectdiscovery/chaos-client/cmd/chaos
+> GO111MODULE=on go get -u github.com/projectdiscovery/chaos-client/cmd/chaos
 ```
 
 ## Usage:- 
 
-```
-chaos -h
+```bash
+> chaos -h
 ```
 
 This will display help for the tool. Here are all the switches it supports.
