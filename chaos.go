@@ -16,7 +16,7 @@ import (
 var (
 	chaosKey       = flag.String("key", "", "Chaos key for API")
 	domain         = flag.String("d", "", "Domain contains domain to find subs for")
-	stats          = flag.Bool("stats", false, "Show statistics for the specified domain")
+	count          = flag.Bool("count", false, "Show statistics for the specified domain")
 	uploadfilename = flag.String("f", "", "File containing subdomains to upload")
 	silent         = flag.Bool("silent", false, "Make the output silent")
 )
@@ -58,7 +58,7 @@ func main() {
 	}
 
 	// Only domain stats
-	if *stats {
+	if *count {
 		getDomainStats()
 		return
 	}
