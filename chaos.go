@@ -112,7 +112,7 @@ func getDomainStats() {
 	if err != nil {
 		gologger.Fatalf("Could not unmarshal result: %s\n", err)
 	}
-	gologger.Silentf("%s\n", r["subdomains"])
+	gologger.Silentf("%d\n", int(r["subdomains"].(float64)))
 }
 
 type result struct {
