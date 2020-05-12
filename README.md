@@ -27,7 +27,7 @@ This will display help for the tool. Here are all the switches it supports.
 You can also set the API key as environment variable in your bash profile. 
 
 ```bash
-source CHAOS_KEY="CHAOS_API_KEY"
+export CHAOS_KEY="CHAOS_API_KEY"
 ```
 
 # Running chaos
