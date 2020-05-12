@@ -3,7 +3,7 @@ package runner
 import (
 	"os"
 
-	"github.com/projectdiscovery/chaos-client/chaos/pkg/chaos"
+	"github.com/projectdiscovery/chaos-client/pkg/chaos"
 	"github.com/projectdiscovery/gologger"
 )
 

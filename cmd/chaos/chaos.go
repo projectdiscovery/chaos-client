@@ -1,6 +1,6 @@
 package main
 
-import "github.com/projectdiscovery/chaos-client/chaos/internal/runner"
+import "github.com/projectdiscovery/chaos-client/internal/runner"
 
 func main() {
 	opts := runner.ParseOptions()

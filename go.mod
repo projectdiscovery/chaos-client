@@ -1,4 +1,4 @@
-module github.com/projectdiscovery/chaos-client/chaos
+module github.com/projectdiscovery/chaos-client
 
 go 1.14
 
