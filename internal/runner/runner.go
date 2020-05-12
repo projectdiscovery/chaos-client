@@ -24,6 +24,7 @@ func RunEnumeration(opts *Options) {
 		if err != nil {
 			gologger.Fatalf("Could not upload subdomains: %s\n", err)
 		}
+		gologger.Infof("File processed successfully and subdomains with valid records will be updated to chaos dataset.")
 		return
 	}
 

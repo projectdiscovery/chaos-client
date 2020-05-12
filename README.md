@@ -58,7 +58,7 @@ To get the number of subdomains without getting actual results, you can use the 
 10640320
 ```
 
-Additional subdomains can also be uploaded to the API using the `f` flag. Uploads are limited to 10 MB as of now.
+Additional subdomains can also be uploaded to the API using the `f` flag. Uploads are limited to 10 MB as of now. The uploaded data will be added to the public dataset and is completely voluntary. 
 
 ```bash
 > chaos -f subs.txt
@@ -76,4 +76,4 @@ Additional subdomains can also be uploaded to the API using the `f` flag. Upload
 [INF] File processed successfully and subdomains with valid records will be updated to chaos dataset.
 ```
 
-The API is rate-limited to 1 request per second.
+> NOTE: **The API is rate-limited to 1 request per second.**
