@@ -28,7 +28,7 @@ func New(apiKey string) *Client {
 				InsecureSkipVerify: true,
 			},
 		},
-		Timeout: time.Duration(30) * time.Second,
+		Timeout: time.Duration(600) * time.Second, // 10 minutes - uploads may take long
 	}
 	return &Client{httpClient: httpclient, apiKey: apiKey}
 }
@@ -61,7 +61,7 @@ func (c *Client) GetStatistics(req *GetStatisticsRequest) (*GetStatisticsRespons
 	}()
 
 	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("invalid status code recieved: %d", resp.StatusCode)
+		return nil, fmt.Errorf("invalid status code received: %d", resp.StatusCode)
 	}
 
 	response := GetStatisticsResponse{}
@@ -100,7 +100,7 @@ func (c *Client) GetSubdomains(req *GetSubdomainsRequest) (*GetSubdomainsRespons
 	}()
 
 	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("invalid status code recieved: %d", resp.StatusCode)
+		return nil, fmt.Errorf("invalid status code received: %d", resp.StatusCode)
 	}
 
 	response := GetSubdomainsResponse{}
@@ -137,7 +137,7 @@ func (c *Client) PutSubdomains(req *PutSubdomainsRequest) (*PutSubdomainsRespons
 	}()
 
 	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("invalid status code recieved: %d", resp.StatusCode)
+		return nil, fmt.Errorf("invalid status code received: %d", resp.StatusCode)
 	}
 	return &PutSubdomainsResponse{}, nil
 }
