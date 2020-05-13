@@ -76,4 +76,4 @@ Additional subdomains can also be uploaded to the API using the `f` flag. Upload
 [INF] File processed successfully and subdomains with valid records will be updated to chaos dataset.
 ```
 
-> NOTE: **The API is rate-limited to 1 request per second.**
+> NOTE: **The API is rate-limited to 1 request at time per token (you can issue the next request only when the previous one is finished).**
