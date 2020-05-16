@@ -9,6 +9,7 @@ import (
 
 // Options contains configuration options for chaos client.
 type Options struct {
+	Update         bool
 	APIKey         string
 	Domain         string
 	Count          bool
@@ -24,6 +25,7 @@ func ParseOptions() *Options {
 	flag.StringVar(&opts.Domain, "d", "", "Domain contains domain to find subs for")
 	flag.BoolVar(&opts.Count, "count", false, "Show statistics for the specified domain")
 	flag.StringVar(&opts.UploadFilename, "f", "", "File containing subdomains to upload")
+	flag.BoolVar(&opts.Update, "update", false, "Upload subdomains from stdin")
 	flag.BoolVar(&opts.Silent, "silent", false, "Make the output silent")
 	flag.Parse()
 
@@ -41,7 +43,7 @@ func ParseOptions() *Options {
 		gologger.Fatalf("Authorization token not specified\n")
 	}
 
-	if opts.UploadFilename == "" && opts.Domain == "" {
+	if !opts.Update && opts.UploadFilename == "" && opts.Domain == "" {
 		gologger.Fatalf("No input specified for the API\n")
 	}
 	return opts
