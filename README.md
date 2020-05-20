@@ -51,6 +51,8 @@ prop-w-a-mtc02.evip.aol.com
 hostheader.aol.com
 ```
 
+NOTE:- **Chaos dataset endpoint supports "domain" name as input, "string" or "subdomain" based searches are not supported.**   
+
 To get the number of subdomains without getting actual results, you can use the `count` flag.
 
 ```bash
@@ -76,4 +78,4 @@ Additional subdomains can also be uploaded to the API using the `f` flag. Upload
 [INF] File processed successfully and subdomains with valid records will be updated to chaos dataset.
 ```
 
-> NOTE: **The API is rate-limited to 1 request at time per token (you can issue the next request only when the previous one is finished).**
+NOTE: **The API is rate-limited to 1 request at time per token (you can issue the next request only when the previous one is finished).**
