@@ -17,7 +17,7 @@ func RunEnumeration(opts *Options) {
 		in := bufio.NewScanner(os.Stdin)
 		for in.Scan() {
 			buf.Write(in.Bytes())
-			buf.WriteString(`\n`)
+			buf.WriteString("\n")
 		}
 		_, err := client.PutSubdomains(&chaos.PutSubdomainsRequest{
 			Contents: buf,
