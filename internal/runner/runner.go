@@ -67,4 +67,19 @@ func RunEnumeration(opts *Options) {
 			gologger.Silentf("%s.%s\n", subdomain, opts.Domain)
 		}
 	}
+
+	if opts.Output != "" {
+		var file *os.File
+		file, err = os.Create(opts.Output)
+		if err != nil {
+			gologger.Fatalf("Could not create file %s for %s: %s\n", opts.Output, opts.Domain, err)
+		}
+		err = WriteOutput(resp.Subdomains, opts.Domain, file)
+		if err != nil {
+			gologger.Fatalf("Could not write results to file %s for %s: %s\n", opts.Output, opts.Domain, err)
+		}
+		file.Close()
+	}
+
+	return
 }

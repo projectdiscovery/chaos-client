@@ -15,6 +15,7 @@ type Options struct {
 	Count          bool
 	UploadFilename string
 	Silent         bool
+	Output         string
 }
 
 // ParseOptions parses the command line options for application
@@ -27,6 +28,7 @@ func ParseOptions() *Options {
 	flag.StringVar(&opts.UploadFilename, "f", "", "File containing subdomains to upload")
 	flag.BoolVar(&opts.Update, "update", false, "Upload subdomains from stdin")
 	flag.BoolVar(&opts.Silent, "silent", false, "Make the output silent")
+	flag.StringVar(&opts.Output, "o", "", "File to write output to (optional)")
 	flag.Parse()
 
 	if opts.Silent {
@@ -34,6 +36,11 @@ func ParseOptions() *Options {
 	}
 	showBanner()
 
+	opts.validateOptions()
+
+	return opts
+}
+func (opts *Options) validateOptions() {
 	// If empty try to retrieve the key from env variables
 	if opts.APIKey == "" {
 		opts.APIKey = os.Getenv("CHAOS_KEY")
@@ -46,5 +53,4 @@ func ParseOptions() *Options {
 	if !opts.Update && opts.UploadFilename == "" && opts.Domain == "" {
 		gologger.Fatalf("No input specified for the API\n")
 	}
-	return opts
 }
