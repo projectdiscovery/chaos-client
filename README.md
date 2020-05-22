@@ -63,10 +63,16 @@ To get the number of subdomains without getting actual results, you can use the 
 10640320
 ```
 
-Additional subdomains can also be uploaded to the API using the `f` flag. Uploads are limited to 10 MB as of now. The uploaded data will be added to the public dataset and is completely voluntary. 
+Additional subdomains can also be uploaded to the API using the `update` flag. Uploads are limited to 10 MB as of now. The uploaded data will be added to the public dataset and is completely voluntary. 
+
+NOTE:- 
+
+**Only subdomains with valid record gets added to dataset, subdomains with dead records gets eliminated**   
+
 
 ```bash
-> chaos -f subs.txt
+> cat subs.txt | chaos -update
+
         __                    
   _____/ /_  ____ _____  _____
  / ___/ __ \/ __  / __ \/ ___/
@@ -77,8 +83,24 @@ Additional subdomains can also be uploaded to the API using the `f` flag. Upload
 
 [WRN] Use with caution. You are responsible for your actions
 [WRN] Developers assume no liability and are not responsible for any misuse or damage.
+[INF] Input processed successfully and subdomains with valid records will be updated to chaos dataset.
+```
+Subfinder also supports updating data to chaos dataset and can be queried later on the go. 
 
-[INF] File processed successfully and subdomains with valid records will be updated to chaos dataset.
+```bash
+> cat domains.txt | subfinder -cd
+
+        __                    
+  _____/ /_  ____ _____  _____
+ / ___/ __ \/ __  / __ \/ ___/
+/ /__/ / / / /_/ / /_/ (__  ) 
+\___/_/ /_/\__,_/\____/____/  v1
+
+		projectdiscovery.io
+
+[WRN] Use with caution. You are responsible for your actions
+[WRN] Developers assume no liability and are not responsible for any misuse or damage.
+[INF] Input processed successfully and subdomains with valid records will be updated to chaos dataset.
 ```
 
 NOTE: 
