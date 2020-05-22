@@ -11,7 +11,7 @@ const banner = `
 `
 
 // Version is the current version of chaos
-const Version = `1.0.0`
+const Version = `0.1.3`
 
 // showBanner is used to show the banner to the user
 func showBanner() {
