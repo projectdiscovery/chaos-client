@@ -20,6 +20,7 @@ This will display help for the tool. Here are all the switches it supports.
 |---------|------------------------------------------|---------------------------|
 | -d      | Domain to find subdomains for            | chaos -d uber.com         |
 | -count  | Show statistics for the specified domain | chaos -d uber.com -count  |
+| -o  | File to write output to (optional)           | chaos -d uber.com -o uber.txt  |
 | -f      | File containing subdomains to upload     | chaos -f subdomains.txt   |
 | -key    | Chaos key for API                        | chaos -key API_KEY        |
 | -silent | Make the output silent                   | chaos -d uber.com -silent |
@@ -51,7 +52,9 @@ prop-w-a-mtc02.evip.aol.com
 hostheader.aol.com
 ```
 
-NOTE:- **Chaos dataset endpoint supports "domain" name as input, "string" or "subdomain" based searches are not supported.**   
+NOTE:- 
+
+**Chaos dataset endpoint supports "domain" name as input, "string" or "subdomain" based searches are not supported.**   
 
 To get the number of subdomains without getting actual results, you can use the `count` flag.
 
@@ -78,4 +81,6 @@ Additional subdomains can also be uploaded to the API using the `f` flag. Upload
 [INF] File processed successfully and subdomains with valid records will be updated to chaos dataset.
 ```
 
-NOTE: **The API is rate-limited to 1 request at time per token (you can issue the next request only when the previous one is finished).**
+NOTE: 
+
+**The API is rate-limited to 1 request at time per token (you can issue the next request only when the previous one is finished).**
