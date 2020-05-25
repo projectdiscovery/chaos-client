@@ -1,6 +1,6 @@
-# chaos
+# Chaos
 
-Go client to communicate with Chaos DNS endpoint. 
+Go client to communicate with Chaos dataset API. 
 
 ## Installation:- 
 
@@ -20,7 +20,7 @@ This will display help for the tool. Here are all the switches it supports.
 |---------|------------------------------------------|---------------------------|
 | -d      | Domain to find subdomains for            | chaos -d uber.com         |
 | -count  | Show statistics for the specified domain | chaos -d uber.com -count  |
-| -o  | File to write output to (optional)           | chaos -d uber.com -o uber.txt  |
+| -o      | File to write output to (optional)       | chaos -d uber.com -o uber.txt  |
 | -f      | File containing subdomains to upload     | chaos -f subdomains.txt   |
 | -key    | Chaos key for API                        | chaos -key API_KEY        |
 | -silent | Make the output silent                   | chaos -d uber.com -silent |
@@ -30,6 +30,10 @@ You can also set the API key as environment variable in your bash profile.
 ```bash
 export CHAOS_KEY="CHAOS_API_KEY"
 ```
+
+### How to avail `API_KEY`
+
+As of now Chaos dataset is in beta for testing and API endpoint access available to invited users only, you can request an invite for yourself [here](https://forms.gle/LkHUjoxAiHE6djtU6), we are sending out invites in FIFO manner, so we have no ETA.  
 
 # Running chaos
 
