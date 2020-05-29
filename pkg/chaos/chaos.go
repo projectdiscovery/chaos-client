@@ -2,6 +2,7 @@ package chaos
 
 import (
 	"crypto/tls"
+	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -77,38 +78,56 @@ type GetSubdomainsRequest struct {
 	Domain string
 }
 
-// GetSubdomainsResponse is the response for a subdomains request.
+// GetSubdomainsResponse is the response for a host subdomains.
 type GetSubdomainsResponse struct {
-	Subdomains []string `json:"subdomains"`
+	Subdomain string
+	Error     error
 }
 
 // GetSubdomains returns the subdomains for a given domain.
-func (c *Client) GetSubdomains(req *GetSubdomainsRequest) (*GetSubdomainsResponse, error) {
-	request, err := http.NewRequest("GET", fmt.Sprintf("https://dns.projectdiscovery.io/dns/%s/subdomains", req.Domain), nil)
-	if err != nil {
-		return nil, errors.Wrap(err, "could not create request")
-	}
-	request.Header.Set("Authorization", c.apiKey)
+func (c *Client) GetSubdomains(req *GetSubdomainsRequest) chan *GetSubdomainsResponse {
+	results := make(chan *GetSubdomainsResponse)
+	go func(results chan *GetSubdomainsResponse) {
+		defer close(results)
 
-	resp, err := c.httpClient.Do(request)
-	if err != nil {
-		return nil, errors.Wrap(err, "could not make request")
-	}
-	defer func() {
-		io.Copy(ioutil.Discard, resp.Body)
-		resp.Body.Close()
-	}()
+		request, err := http.NewRequest("GET", fmt.Sprintf("https://dns.projectdiscovery.io/dns/%s/subdomains", req.Domain), nil)
+		if err != nil {
+			results <- &GetSubdomainsResponse{Error: errors.Wrap(err, "could not create request")}
+			return
+		}
+		request.Header.Set("Authorization", c.apiKey)
 
-	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("invalid status code received: %d", resp.StatusCode)
-	}
+		resp, err := c.httpClient.Do(request)
+		if err != nil {
+			results <- &GetSubdomainsResponse{Error: errors.Wrap(err, "could not make request")}
+			return
+		}
+		defer func() {
+			io.Copy(ioutil.Discard, resp.Body)
+			resp.Body.Close()
+		}()
 
-	response := GetSubdomainsResponse{}
-	err = jsoniter.NewDecoder(resp.Body).Decode(&response)
-	if err != nil {
-		return nil, errors.Wrap(err, "could not unmarshal results")
-	}
-	return &response, nil
+		if resp.StatusCode != 200 {
+			results <- &GetSubdomainsResponse{Error: fmt.Errorf("invalid status code received: %d", resp.StatusCode)}
+			return
+		}
+
+		d := json.NewDecoder(resp.Body)
+		d.Token()
+		// first 4 token should be skipped
+		skip := 0
+		for d.More() {
+			token, _ := d.Token()
+			skip++
+			if skip <= 4 {
+				continue
+			}
+			results <- &GetSubdomainsResponse{Subdomain: fmt.Sprintf("%s", token)}
+		}
+		d.Token()
+	}(results)
+
+	return results
 }
 
 // PutSubdomainsRequest is the request for uploading subdomains.
