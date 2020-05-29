@@ -78,28 +78,28 @@ type GetSubdomainsRequest struct {
 	Domain string
 }
 
-// GetSubdomainsResponse is the response for a host subdomains.
-type GetSubdomainsResponse struct {
+// Result is the response for a host subdomains.
+type Result struct {
 	Subdomain string
 	Error     error
 }
 
 // GetSubdomains returns the subdomains for a given domain.
-func (c *Client) GetSubdomains(req *GetSubdomainsRequest) chan *GetSubdomainsResponse {
-	results := make(chan *GetSubdomainsResponse)
-	go func(results chan *GetSubdomainsResponse) {
+func (c *Client) GetSubdomains(req *GetSubdomainsRequest) chan *Result {
+	results := make(chan *Result)
+	go func(results chan *Result) {
 		defer close(results)
 
 		request, err := http.NewRequest("GET", fmt.Sprintf("https://dns.projectdiscovery.io/dns/%s/subdomains", req.Domain), nil)
 		if err != nil {
-			results <- &GetSubdomainsResponse{Error: errors.Wrap(err, "could not create request")}
+			results <- &Result{Error: errors.Wrap(err, "could not create request")}
 			return
 		}
 		request.Header.Set("Authorization", c.apiKey)
 
 		resp, err := c.httpClient.Do(request)
 		if err != nil {
-			results <- &GetSubdomainsResponse{Error: errors.Wrap(err, "could not make request")}
+			results <- &Result{Error: errors.Wrap(err, "could not make request")}
 			return
 		}
 		defer func() {
@@ -108,7 +108,7 @@ func (c *Client) GetSubdomains(req *GetSubdomainsRequest) chan *GetSubdomainsRes
 		}()
 
 		if resp.StatusCode != 200 {
-			results <- &GetSubdomainsResponse{Error: fmt.Errorf("invalid status code received: %d", resp.StatusCode)}
+			results <- &Result{Error: fmt.Errorf("invalid status code received: %d", resp.StatusCode)}
 			return
 		}
 
@@ -122,7 +122,7 @@ func (c *Client) GetSubdomains(req *GetSubdomainsRequest) chan *GetSubdomainsRes
 			if skip <= 4 {
 				continue
 			}
-			results <- &GetSubdomainsResponse{Subdomain: fmt.Sprintf("%s", token)}
+			results <- &Result{Subdomain: fmt.Sprintf("%s", token)}
 		}
 		d.Token()
 	}(results)
