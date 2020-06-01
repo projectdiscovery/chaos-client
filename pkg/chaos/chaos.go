@@ -2,6 +2,7 @@ package chaos
 
 import (
 	"crypto/tls"
+	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -77,38 +78,56 @@ type GetSubdomainsRequest struct {
 	Domain string
 }
 
-// GetSubdomainsResponse is the response for a subdomains request.
-type GetSubdomainsResponse struct {
-	Subdomains []string `json:"subdomains"`
+// Result is the response for a host subdomains.
+type Result struct {
+	Subdomain string
+	Error     error
 }
 
 // GetSubdomains returns the subdomains for a given domain.
-func (c *Client) GetSubdomains(req *GetSubdomainsRequest) (*GetSubdomainsResponse, error) {
-	request, err := http.NewRequest("GET", fmt.Sprintf("https://dns.projectdiscovery.io/dns/%s/subdomains", req.Domain), nil)
-	if err != nil {
-		return nil, errors.Wrap(err, "could not create request")
-	}
-	request.Header.Set("Authorization", c.apiKey)
+func (c *Client) GetSubdomains(req *GetSubdomainsRequest) chan *Result {
+	results := make(chan *Result)
+	go func(results chan *Result) {
+		defer close(results)
 
-	resp, err := c.httpClient.Do(request)
-	if err != nil {
-		return nil, errors.Wrap(err, "could not make request")
-	}
-	defer func() {
-		io.Copy(ioutil.Discard, resp.Body)
-		resp.Body.Close()
-	}()
+		request, err := http.NewRequest("GET", fmt.Sprintf("https://dns.projectdiscovery.io/dns/%s/subdomains", req.Domain), nil)
+		if err != nil {
+			results <- &Result{Error: errors.Wrap(err, "could not create request")}
+			return
+		}
+		request.Header.Set("Authorization", c.apiKey)
 
-	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("invalid status code received: %d", resp.StatusCode)
-	}
+		resp, err := c.httpClient.Do(request)
+		if err != nil {
+			results <- &Result{Error: errors.Wrap(err, "could not make request")}
+			return
+		}
+		defer func() {
+			io.Copy(ioutil.Discard, resp.Body)
+			resp.Body.Close()
+		}()
 
-	response := GetSubdomainsResponse{}
-	err = jsoniter.NewDecoder(resp.Body).Decode(&response)
-	if err != nil {
-		return nil, errors.Wrap(err, "could not unmarshal results")
-	}
-	return &response, nil
+		if resp.StatusCode != 200 {
+			results <- &Result{Error: fmt.Errorf("invalid status code received: %d", resp.StatusCode)}
+			return
+		}
+
+		d := json.NewDecoder(resp.Body)
+		d.Token()
+		// first 4 token should be skipped
+		skip := 0
+		for d.More() {
+			token, _ := d.Token()
+			skip++
+			if skip <= 4 {
+				continue
+			}
+			results <- &Result{Subdomain: fmt.Sprintf("%s", token)}
+		}
+		d.Token()
+	}(results)
+
+	return results
 }
 
 // PutSubdomainsRequest is the request for uploading subdomains.

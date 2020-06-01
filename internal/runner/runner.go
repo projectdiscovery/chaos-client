@@ -3,6 +3,7 @@ package runner
 import (
 	"bufio"
 	"bytes"
+	"fmt"
 	"os"
 
 	"github.com/projectdiscovery/chaos-client/pkg/chaos"
@@ -56,28 +57,38 @@ func RunEnumeration(opts *Options) {
 		return
 	}
 
-	resp, err := client.GetSubdomains(&chaos.GetSubdomainsRequest{
-		Domain: opts.Domain,
-	})
-	if err != nil {
-		gologger.Fatalf("Could not get subdomains: %s\n", err)
-	}
-	for _, subdomain := range resp.Subdomains {
-		if subdomain != "" {
-			gologger.Silentf("%s.%s\n", subdomain, opts.Domain)
-		}
-	}
+	var (
+		file      *os.File
+		bufwriter *bufio.Writer
+	)
 
 	if opts.Output != "" {
-		var file *os.File
+		var err error
 		file, err = os.Create(opts.Output)
 		if err != nil {
 			gologger.Fatalf("Could not create file %s for %s: %s\n", opts.Output, opts.Domain, err)
 		}
-		err = WriteOutput(resp.Subdomains, opts.Domain, file)
-		if err != nil {
-			gologger.Fatalf("Could not write results to file %s for %s: %s\n", opts.Output, opts.Domain, err)
+		bufwriter = bufio.NewWriter(file)
+	}
+
+	for item := range client.GetSubdomains(&chaos.GetSubdomainsRequest{Domain: opts.Domain}) {
+		if item.Error != nil {
+			gologger.Fatalf("Could not get subdomains: %s\n", item.Error)
 		}
+		if item.Subdomain != "" {
+			gologger.Silentf("%s.%s\n", item.Subdomain, opts.Domain)
+		}
+
+		if opts.Output != "" {
+			_, err := bufwriter.WriteString(fmt.Sprintf("%s.%s\n", item.Subdomain, opts.Domain))
+			if err != nil {
+				gologger.Fatalf("Could not write results to file %s for %s: %s\n", opts.Output, opts.Domain, err)
+			}
+		}
+	}
+
+	if file != nil {
+		bufwriter.Flush()
 		file.Close()
 	}
 
