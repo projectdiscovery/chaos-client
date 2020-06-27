@@ -1,8 +1,8 @@
 package runner
 
 import (
-	"bufio"
 	"flag"
+	"io"
 	"os"
 
 	"github.com/projectdiscovery/gologger"
@@ -10,16 +10,17 @@ import (
 
 // Options contains configuration options for chaos client.
 type Options struct {
-	Update           bool
-	APIKey           string
-	Domain           string
-	Count            bool
-	UploadFilename   string
-	Silent           bool
-	Output           string
-	DomainsFile      string
-	outputFile       *os.File
-	outputFileWriter *bufio.Writer
+	Update         bool
+	APIKey         string
+	Domain         string
+	Count          bool
+	UploadFilename string
+	Silent         bool
+	Output         string
+	DomainsFile    string
+	JSONOutput     bool
+	outputFile     *os.File
+	outputWriter   io.Writer
 }
 
 // ParseOptions parses the command line options for application
@@ -34,6 +35,7 @@ func ParseOptions() *Options {
 	flag.BoolVar(&opts.Silent, "silent", false, "Make the output silent")
 	flag.StringVar(&opts.Output, "o", "", "File to write output to (optional)")
 	flag.StringVar(&opts.DomainsFile, "dL", "", "File containing subdomains to query (optional)")
+	flag.BoolVar(&opts.JSONOutput, "json", false, "Print output as json")
 	flag.Parse()
 
 	if opts.Silent {

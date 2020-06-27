@@ -3,6 +3,7 @@ package runner
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"os"
 
 	"github.com/projectdiscovery/chaos-client/pkg/chaos"
@@ -44,6 +45,8 @@ func RunEnumeration(opts *Options) {
 		return
 	}
 
+	var outputWriters []io.Writer
+
 	if opts.Output != "" {
 		var err error
 		opts.outputFile, err = os.Create(opts.Output)
@@ -51,9 +54,14 @@ func RunEnumeration(opts *Options) {
 			gologger.Fatalf("Could not create file %s for %s: %s\n", opts.Output, opts.Domain, err)
 		}
 		defer opts.outputFile.Close()
-		opts.outputFileWriter = bufio.NewWriter(opts.outputFile)
-		defer opts.outputFileWriter.Flush()
+		outputWriters = append(outputWriters, opts.outputFile)
 	}
+
+	if opts.JSONOutput {
+		outputWriters = append(outputWriters, os.Stdout)
+	}
+
+	opts.outputWriter = io.MultiWriter(outputWriters...)
 
 	if opts.Domain != "" {
 		processDomain(client, opts)
@@ -65,18 +73,25 @@ func RunEnumeration(opts *Options) {
 }
 
 func processDomain(client *chaos.Client, opts *Options) {
-	for item := range client.GetSubdomains(&chaos.GetSubdomainsRequest{Domain: opts.Domain}) {
+	req := &chaos.GetSubdomainsRequest{Domain: opts.Domain}
+	if opts.JSONOutput {
+		req.OutputFormat = "json"
+	}
+	for item := range client.GetSubdomains(req) {
 		if item.Error != nil {
 			gologger.Fatalf("Could not get subdomains: %s\n", item.Error)
 		}
-		if item.Subdomain != "" {
-			gologger.Silentf("%s.%s\n", item.Subdomain, opts.Domain)
-		}
-
-		if opts.Output != "" {
-			_, err := opts.outputFileWriter.WriteString(fmt.Sprintf("%s.%s\n", item.Subdomain, opts.Domain))
-			if err != nil {
-				gologger.Fatalf("Could not write results to file %s for %s: %s\n", opts.Output, opts.Domain, err)
+		if opts.JSONOutput {
+			io.Copy(opts.outputWriter, *item.Reader)
+		} else {
+			if item.Subdomain != "" {
+				gologger.Silentf("%s.%s\n", item.Subdomain, opts.Domain)
+			}
+			if opts.Output != "" {
+				_, err := fmt.Fprintf(opts.outputWriter, "%s.%s\n", item.Subdomain, opts.Domain)
+				if err != nil {
+					gologger.Fatalf("Could not write results to file %s for %s: %s\n", opts.Output, opts.Domain, err)
+				}
 			}
 		}
 	}

@@ -75,12 +75,14 @@ func (c *Client) GetStatistics(req *GetStatisticsRequest) (*GetStatisticsRespons
 
 // GetSubdomainsRequest is the request for a host subdomains.
 type GetSubdomainsRequest struct {
-	Domain string
+	Domain       string
+	OutputFormat string
 }
 
 // Result is the response for a host subdomains.
 type Result struct {
 	Subdomain string
+	Reader    *io.ReadCloser
 	Error     error
 }
 
@@ -103,8 +105,10 @@ func (c *Client) GetSubdomains(req *GetSubdomainsRequest) chan *Result {
 			return
 		}
 		defer func() {
-			io.Copy(ioutil.Discard, resp.Body)
-			resp.Body.Close()
+			if req.OutputFormat == "" {
+				io.Copy(ioutil.Discard, resp.Body)
+				resp.Body.Close()
+			}
 		}()
 
 		if resp.StatusCode != 200 {
@@ -112,19 +116,24 @@ func (c *Client) GetSubdomains(req *GetSubdomainsRequest) chan *Result {
 			return
 		}
 
-		d := json.NewDecoder(resp.Body)
-		d.Token()
-		// first 4 token should be skipped
-		skip := 0
-		for d.More() {
-			token, _ := d.Token()
-			skip++
-			if skip <= 4 {
-				continue
+		switch req.OutputFormat {
+		case "json":
+			results <- &Result{Reader: &resp.Body}
+		default:
+			d := json.NewDecoder(resp.Body)
+			d.Token()
+			// first 4 token should be skipped
+			skip := 0
+			for d.More() {
+				token, _ := d.Token()
+				skip++
+				if skip <= 4 {
+					continue
+				}
+				results <- &Result{Subdomain: fmt.Sprintf("%s", token)}
 			}
-			results <- &Result{Subdomain: fmt.Sprintf("%s", token)}
+			d.Token()
 		}
-		d.Token()
 	}(results)
 
 	return results
