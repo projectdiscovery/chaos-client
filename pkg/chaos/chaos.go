@@ -56,13 +56,13 @@ func (c *Client) GetStatistics(req *GetStatisticsRequest) (*GetStatisticsRespons
 	if err != nil {
 		return nil, errors.Wrap(err, "could not make request")
 	}
-	defer func() {
-		io.Copy(ioutil.Discard, resp.Body)
-		resp.Body.Close()
-	}()
 
 	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("invalid status code received: %d", resp.StatusCode)
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return nil, errors.Wrap(err, "could not read response")
+		}
+		return nil, fmt.Errorf("invalid status code received: %d - %s", resp.StatusCode, string(body))
 	}
 
 	response := GetStatisticsResponse{}
@@ -104,15 +104,14 @@ func (c *Client) GetSubdomains(req *GetSubdomainsRequest) chan *Result {
 			results <- &Result{Error: errors.Wrap(err, "could not make request")}
 			return
 		}
-		defer func() {
-			if req.OutputFormat == "" {
-				io.Copy(ioutil.Discard, resp.Body)
-				resp.Body.Close()
-			}
-		}()
 
 		if resp.StatusCode != 200 {
-			results <- &Result{Error: fmt.Errorf("invalid status code received: %d", resp.StatusCode)}
+			body, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				results <- &Result{Error: errors.Wrap(err, "could not read response")}
+				return
+			}
+			results <- &Result{Error: fmt.Errorf("invalid status code received: %d - %s", resp.StatusCode, string(body))}
 			return
 		}
 
@@ -159,13 +158,15 @@ func (c *Client) PutSubdomains(req *PutSubdomainsRequest) (*PutSubdomainsRespons
 	if err != nil {
 		return nil, errors.Wrap(err, "could not make request")
 	}
-	defer func() {
-		io.Copy(ioutil.Discard, resp.Body)
-		resp.Body.Close()
-	}()
+	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("invalid status code received: %d", resp.StatusCode)
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return nil, errors.Wrap(err, "could not read response")
+		}
+		return nil, fmt.Errorf("invalid status code received: %d - %s", resp.StatusCode, string(body))
 	}
+	io.Copy(ioutil.Discard, resp.Body)
 	return &PutSubdomainsResponse{}, nil
 }
