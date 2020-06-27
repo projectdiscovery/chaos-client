@@ -2,7 +2,6 @@ package runner
 
 import (
 	"bufio"
-	"bytes"
 	"fmt"
 	"os"
 
@@ -14,16 +13,7 @@ import (
 func RunEnumeration(opts *Options) {
 	client := chaos.New(opts.APIKey)
 	if opts.Update {
-		var buf = &bytes.Buffer{}
-		in := bufio.NewScanner(os.Stdin)
-		for in.Scan() {
-			buf.Write(in.Bytes())
-			buf.WriteString("\n")
-		}
-		_, err := client.PutSubdomains(&chaos.PutSubdomainsRequest{
-			Contents: buf,
-		})
-		if err != nil {
+		if _, err := client.PutSubdomains(&chaos.PutSubdomainsRequest{Contents: os.Stdin}); err != nil {
 			gologger.Fatalf("Could not upload subdomains: %s\n", err)
 		}
 		gologger.Infof("Input processed successfully and subdomains with valid records will be updated to chaos dataset.")
@@ -36,10 +26,7 @@ func RunEnumeration(opts *Options) {
 		}
 		defer file.Close()
 
-		_, err = client.PutSubdomains(&chaos.PutSubdomainsRequest{
-			Contents: file,
-		})
-		if err != nil {
+		if _, err = client.PutSubdomains(&chaos.PutSubdomainsRequest{Contents: file}); err != nil {
 			gologger.Fatalf("Could not upload subdomains: %s\n", err)
 		}
 		gologger.Infof("File processed successfully and subdomains with valid records will be updated to chaos dataset.")
@@ -57,20 +44,27 @@ func RunEnumeration(opts *Options) {
 		return
 	}
 
-	var (
-		file      *os.File
-		bufwriter *bufio.Writer
-	)
-
 	if opts.Output != "" {
 		var err error
-		file, err = os.Create(opts.Output)
+		opts.outputFile, err = os.Create(opts.Output)
 		if err != nil {
 			gologger.Fatalf("Could not create file %s for %s: %s\n", opts.Output, opts.Domain, err)
 		}
-		bufwriter = bufio.NewWriter(file)
+		defer opts.outputFile.Close()
+		opts.outputFileWriter = bufio.NewWriter(opts.outputFile)
+		defer opts.outputFileWriter.Flush()
 	}
 
+	if opts.Domain != "" {
+		processDomain(client, opts)
+	}
+
+	if opts.hasStdin() || opts.DomainsFile != "" {
+		processList(client, opts)
+	}
+}
+
+func processDomain(client *chaos.Client, opts *Options) {
 	for item := range client.GetSubdomains(&chaos.GetSubdomainsRequest{Domain: opts.Domain}) {
 		if item.Error != nil {
 			gologger.Fatalf("Could not get subdomains: %s\n", item.Error)
@@ -80,17 +74,32 @@ func RunEnumeration(opts *Options) {
 		}
 
 		if opts.Output != "" {
-			_, err := bufwriter.WriteString(fmt.Sprintf("%s.%s\n", item.Subdomain, opts.Domain))
+			_, err := opts.outputFileWriter.WriteString(fmt.Sprintf("%s.%s\n", item.Subdomain, opts.Domain))
 			if err != nil {
 				gologger.Fatalf("Could not write results to file %s for %s: %s\n", opts.Output, opts.Domain, err)
 			}
 		}
 	}
+}
 
-	if file != nil {
-		bufwriter.Flush()
-		file.Close()
+func processList(client *chaos.Client, opts *Options) {
+	var (
+		file *os.File
+		err  error
+	)
+	if opts.hasStdin() {
+		file = os.Stdin
+	} else if opts.UploadFilename != "" {
+		file, err = os.Open(opts.UploadFilename)
+		if err != nil {
+			gologger.Fatalf("Could not open input file: %s\n", err)
+		}
+		defer file.Close()
 	}
 
-	return
+	in := bufio.NewScanner(file)
+	for in.Scan() {
+		opts.Domain = in.Text()
+		processDomain(client, opts)
+	}
 }

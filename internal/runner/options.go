@@ -1,6 +1,7 @@
 package runner
 
 import (
+	"bufio"
 	"flag"
 	"os"
 
@@ -9,13 +10,16 @@ import (
 
 // Options contains configuration options for chaos client.
 type Options struct {
-	Update         bool
-	APIKey         string
-	Domain         string
-	Count          bool
-	UploadFilename string
-	Silent         bool
-	Output         string
+	Update           bool
+	APIKey           string
+	Domain           string
+	Count            bool
+	UploadFilename   string
+	Silent           bool
+	Output           string
+	DomainsFile      string
+	outputFile       *os.File
+	outputFileWriter *bufio.Writer
 }
 
 // ParseOptions parses the command line options for application
@@ -29,6 +33,7 @@ func ParseOptions() *Options {
 	flag.BoolVar(&opts.Update, "update", false, "Upload subdomains from stdin")
 	flag.BoolVar(&opts.Silent, "silent", false, "Make the output silent")
 	flag.StringVar(&opts.Output, "o", "", "File to write output to (optional)")
+	flag.StringVar(&opts.DomainsFile, "dL", "", "File containing subdomains to query (optional)")
 	flag.Parse()
 
 	if opts.Silent {
@@ -50,7 +55,19 @@ func (opts *Options) validateOptions() {
 		gologger.Fatalf("Authorization token not specified\n")
 	}
 
-	if !opts.Update && opts.UploadFilename == "" && opts.Domain == "" {
+	if !opts.Update && opts.UploadFilename == "" && opts.Domain == "" && opts.DomainsFile == "" && !opts.hasStdin() {
 		gologger.Fatalf("No input specified for the API\n")
 	}
+}
+
+func (opts *Options) hasStdin() bool {
+	fi, err := os.Stdin.Stat()
+	if err != nil {
+		return false
+	}
+	if fi.Mode()&os.ModeNamedPipe == 0 {
+		return false
+	}
+
+	return true
 }
