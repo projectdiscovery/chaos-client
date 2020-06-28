@@ -43,18 +43,17 @@ func applyFilter(data *chaos.BBQData, filter *Filter) bool {
 	if filter.FilterWildcard && data.Wildcard {
 		return false
 	}
-
 	// dns status code
-	if filter.DNSStatusCode == NOERROR && data.StatusCode != "noerror" {
+	if filter.DNSStatusCode == NOERROR && data.StatusCode != "NOERROR" {
 		return false
 	}
-	if filter.DNSStatusCode == NXDOMAIN && data.StatusCode != "nxdomain" {
+	if filter.DNSStatusCode == NXDOMAIN && data.StatusCode != "NXDOMAIN" {
 		return false
 	}
-	if filter.DNSStatusCode == SERVFAIL && data.StatusCode != "servfail" {
+	if filter.DNSStatusCode == SERVFAIL && data.StatusCode != "SERVFAIL" {
 		return false
 	}
-	if filter.DNSStatusCode == REFUSED && data.StatusCode != "refused" {
+	if filter.DNSStatusCode == REFUSED && data.StatusCode != "REFUSED" {
 		return false
 	}
 

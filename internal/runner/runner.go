@@ -46,8 +46,7 @@ func RunEnumeration(opts *Options) {
 		return
 	}
 
-	var outputWriters []io.Writer
-
+	outputWriters := []io.Writer{os.Stdout}
 	if opts.Output != "" {
 		var err error
 		opts.outputFile, err = os.Create(opts.Output)
@@ -57,15 +56,14 @@ func RunEnumeration(opts *Options) {
 		defer opts.outputFile.Close()
 		outputWriters = append(outputWriters, opts.outputFile)
 	}
-
-	if opts.JSONOutput {
-		outputWriters = append(outputWriters, os.Stdout)
-	}
-
 	opts.outputWriter = io.MultiWriter(outputWriters...)
 
 	if opts.Domain != "" {
-		processDomain(client, opts)
+		if opts.BBQ {
+			processBBQDomain(client, opts)
+		} else {
+			processDomain(client, opts)
+		}
 	}
 
 	if opts.hasStdin() || opts.DomainsFile != "" {
@@ -119,11 +117,9 @@ func processBBQDomain(client *chaos.Client, opts *Options) {
 				continue
 			}
 
-			if opts.Output != "" {
-				_, err := fmt.Fprintf(opts.outputWriter, extractOutput(&bbqdata, opts.filter))
-				if err != nil {
-					gologger.Fatalf("Could not write results to file %s for %s: %s\n", opts.Output, opts.Domain, err)
-				}
+			_, err := fmt.Fprintf(opts.outputWriter, "%s\n", extractOutput(&bbqdata, opts.filter))
+			if err != nil {
+				gologger.Fatalf("Could not write results to file %s for %s: %s\n", opts.Output, opts.Domain, err)
 			}
 		}
 	}
@@ -147,6 +143,10 @@ func processList(client *chaos.Client, opts *Options) {
 	in := bufio.NewScanner(file)
 	for in.Scan() {
 		opts.Domain = in.Text()
-		processDomain(client, opts)
+		if opts.BBQ {
+			processBBQDomain(client, opts)
+		} else {
+			processDomain(client, opts)
+		}
 	}
 }
