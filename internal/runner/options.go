@@ -10,17 +10,25 @@ import (
 
 // Options contains configuration options for chaos client.
 type Options struct {
-	Update         bool
-	APIKey         string
-	Domain         string
-	Count          bool
-	UploadFilename string
-	Silent         bool
-	Output         string
-	DomainsFile    string
-	JSONOutput     bool
-	outputFile     *os.File
-	outputWriter   io.Writer
+	Update            bool
+	APIKey            string
+	Domain            string
+	Count             bool
+	UploadFilename    string
+	Silent            bool
+	Output            string
+	DomainsFile       string
+	JSONOutput        bool
+	DNSStatusCode     string
+	DNSRecordType     string
+	FilterWildcard    bool
+	Response          bool
+	HTTPUrl           bool
+	HTTPTitle         bool
+	HTTPStatusCode    bool
+	HTTPContentLength bool
+	outputFile        *os.File
+	outputWriter      io.Writer
 }
 
 // ParseOptions parses the command line options for application
@@ -36,6 +44,15 @@ func ParseOptions() *Options {
 	flag.StringVar(&opts.Output, "o", "", "File to write output to (optional)")
 	flag.StringVar(&opts.DomainsFile, "dL", "", "File containing subdomains to query (optional)")
 	flag.BoolVar(&opts.JSONOutput, "json", false, "Print output as json")
+	flag.StringVar(&opts.DNSStatusCode, "dns-status-code", "", "Filter by dns status code")
+	flag.StringVar(&opts.DNSRecordType, "dns-record-type", "", "Filter by dns record type")
+	flag.BoolVar(&opts.FilterWildcard, "filter-wildcard", false, "Filter wildcards")
+	flag.BoolVar(&opts.Response, "resp", false, "Print record response")
+	flag.BoolVar(&opts.HTTPUrl, "http-url", false, "Print http url if the fqdn exposes a web server")
+	flag.BoolVar(&opts.HTTPTitle, "http-title", false, "Print http homepage title if the fqdn exposes a web server")
+	flag.BoolVar(&opts.HTTPStatusCode, "http-status-code", false, "Print http status code if the fqdn exposes a web server")
+	flag.BoolVar(&opts.HTTPContentLength, "http-content-length", false, "Print http content length if the fqdn exposes a web server")
+
 	flag.Parse()
 
 	if opts.Silent {
