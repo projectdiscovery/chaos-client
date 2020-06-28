@@ -21,7 +21,7 @@ func RunEnumeration(opts *Options) {
 		gologger.Infof("Input processed successfully and subdomains with valid records will be updated to chaos dataset.")
 		return
 	}
-	if opts.Update != "" {
+	if opts.Update != "-" {
 		file, err := os.Open(opts.Update)
 		if err != nil {
 			gologger.Fatalf("Could not open input file: %s\n", err)
