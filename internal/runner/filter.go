@@ -1,6 +1,11 @@
 package runner
 
-import "github.com/projectdiscovery/chaos-client/pkg/chaos"
+import (
+	"fmt"
+	"strings"
+
+	"github.com/projectdiscovery/chaos-client/pkg/chaos"
+)
 
 type DNSStatusCode int
 
@@ -73,4 +78,39 @@ func applyFilter(data *chaos.BBQData, filter *Filter) bool {
 	}
 
 	return true
+}
+
+func extractOutput(data *chaos.BBQData, filter *Filter) string {
+	// dns - response
+	if filter.Response {
+		switch filter.DNSRecordType {
+		case A:
+			return strings.Join(data.A, "\n")
+		case AAAA:
+			return strings.Join(data.AAAA, "\n")
+		case CNAME:
+			return strings.Join(data.CNAME, "\n")
+		case NS:
+			return strings.Join(data.NS, "\n")
+		}
+	}
+
+	// http - flags
+	httpbuf := data.HTTPUrl
+	if filter.HTTPStatusCode >= 0 {
+		httpbuf += fmt.Sprintf(" [%d]", data.HTTPStatusCode)
+	}
+	if filter.HTTPContentLength {
+		httpbuf += fmt.Sprintf(" [%d]", data.HTTPContentLength)
+	}
+	if filter.HTTPTitle {
+		httpbuf += fmt.Sprintf(" [%s]", data.HTTPTitle)
+	}
+	// if the url has been requested or some data added to the base one
+	if filter.HTTPUrl || len(httpbuf) != len(data.HTTPUrl) {
+		return httpbuf
+	}
+
+	// default - print subdomain
+	return fmt.Sprintf("%s.%s", data.Subdomain, data.Domain)
 }

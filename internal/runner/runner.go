@@ -119,9 +119,8 @@ func processBBQDomain(client *chaos.Client, opts *Options) {
 				continue
 			}
 
-			// output - TODO
 			if opts.Output != "" {
-				_, err := fmt.Fprintf(opts.outputWriter, "")
+				_, err := fmt.Fprintf(opts.outputWriter, extractOutput(&bbqdata, opts.filter))
 				if err != nil {
 					gologger.Fatalf("Could not write results to file %s for %s: %s\n", opts.Output, opts.Domain, err)
 				}

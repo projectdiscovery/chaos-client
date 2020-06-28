@@ -51,7 +51,7 @@ func ParseOptions() *Options {
 	flag.BoolVar(&opts.Response, "resp", false, "Print record response")
 	flag.BoolVar(&opts.HTTPUrl, "http-url", false, "Print http url if the fqdn exposes a web server")
 	flag.BoolVar(&opts.HTTPTitle, "http-title", false, "Print http homepage title if the fqdn exposes a web server")
-	flag.IntVar(&opts.HTTPStatusCode, "http-status-code", 0, "Print http status code if the fqdn exposes a web server")
+	flag.IntVar(&opts.HTTPStatusCode, "http-status-code", -1, "Print http status code if the fqdn exposes a web server")
 	flag.BoolVar(&opts.HTTPContentLength, "http-content-length", false, "Print http content length if the fqdn exposes a web server")
 
 	flag.Parse()
