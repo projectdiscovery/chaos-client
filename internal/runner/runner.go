@@ -14,15 +14,15 @@ import (
 // RunEnumeration runs the enumeration for Chaos client
 func RunEnumeration(opts *Options) {
 	client := chaos.New(opts.APIKey)
-	if opts.Update {
+	if opts.Update == "" && opts.hasStdin() {
 		if _, err := client.PutSubdomains(&chaos.PutSubdomainsRequest{Contents: os.Stdin}); err != nil {
 			gologger.Fatalf("Could not upload subdomains: %s\n", err)
 		}
 		gologger.Infof("Input processed successfully and subdomains with valid records will be updated to chaos dataset.")
 		return
 	}
-	if opts.UploadFilename != "" {
-		file, err := os.Open(opts.UploadFilename)
+	if opts.Update != "" {
+		file, err := os.Open(opts.Update)
 		if err != nil {
 			gologger.Fatalf("Could not open input file: %s\n", err)
 		}
@@ -134,8 +134,8 @@ func processList(client *chaos.Client, opts *Options) {
 	)
 	if opts.hasStdin() {
 		file = os.Stdin
-	} else if opts.UploadFilename != "" { // TODO - https://github.com/projectdiscovery/chaos-client/issues/19
-		file, err = os.Open(opts.UploadFilename)
+	} else if opts.Update != "" {
+		file, err = os.Open(opts.DomainsFile)
 		if err != nil {
 			gologger.Fatalf("Could not open input file: %s\n", err)
 		}
