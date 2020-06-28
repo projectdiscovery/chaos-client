@@ -110,11 +110,14 @@ func processBBQDomain(client *chaos.Client, opts *Options) {
 		if opts.JSONOutput {
 			io.Copy(opts.outputWriter, *item.Reader)
 		} else {
-			var bbqresult chaos.BBQResult
-			if err := json.Unmarshal(item.Data, &bbqresult); err != nil {
+			var bbqdata chaos.BBQData
+			if err := json.Unmarshal(item.Data, &bbqdata); err != nil {
 				gologger.Fatalf("Could not unmarshal response: %s\n", err)
 			}
-			// filters - TODO
+			// filters
+			if !applyFilter(&bbqdata, opts.filter) {
+				continue
+			}
 
 			// output - TODO
 			if opts.Output != "" {

@@ -24,11 +24,12 @@ type Options struct {
 	Response          bool
 	HTTPUrl           bool
 	HTTPTitle         bool
-	HTTPStatusCode    bool
+	HTTPStatusCode    int
 	HTTPContentLength bool
 	BBQ               bool
 	outputFile        *os.File
 	outputWriter      io.Writer
+	filter            *Filter
 }
 
 // ParseOptions parses the command line options for application
@@ -50,7 +51,7 @@ func ParseOptions() *Options {
 	flag.BoolVar(&opts.Response, "resp", false, "Print record response")
 	flag.BoolVar(&opts.HTTPUrl, "http-url", false, "Print http url if the fqdn exposes a web server")
 	flag.BoolVar(&opts.HTTPTitle, "http-title", false, "Print http homepage title if the fqdn exposes a web server")
-	flag.BoolVar(&opts.HTTPStatusCode, "http-status-code", false, "Print http status code if the fqdn exposes a web server")
+	flag.IntVar(&opts.HTTPStatusCode, "http-status-code", 0, "Print http status code if the fqdn exposes a web server")
 	flag.BoolVar(&opts.HTTPContentLength, "http-content-length", false, "Print http content length if the fqdn exposes a web server")
 
 	flag.Parse()
@@ -77,6 +78,41 @@ func (opts *Options) validateOptions() {
 	if opts.Update == "-" && opts.Domain == "" && opts.DomainsFile == "" && !opts.hasStdin() {
 		gologger.Fatalf("No input specified for the API\n")
 	}
+
+	var filter Filter
+	switch opts.DNSStatusCode {
+	case "noerror":
+		filter.DNSStatusCode = NOERROR
+	case "nxdomain":
+		filter.DNSStatusCode = NXDOMAIN
+	case "servfail":
+		filter.DNSStatusCode = SERVFAIL
+	case "refused":
+		filter.DNSStatusCode = REFUSED
+	default:
+		filter.DNSStatusCode = ANYDNSCODE
+	}
+
+	switch opts.DNSRecordType {
+	case "a":
+		filter.DNSRecordType = A
+	case "aaaa":
+		filter.DNSRecordType = AAAA
+	case "cname":
+		filter.DNSRecordType = CNAME
+	case "ns":
+		filter.DNSRecordType = NS
+	default:
+		filter.DNSRecordType = ANYRECORDTYPE
+	}
+
+	filter.FilterWildcard = opts.FilterWildcard
+	filter.HTTPContentLength = opts.HTTPContentLength
+	filter.HTTPStatusCode = opts.HTTPStatusCode
+	filter.HTTPTitle = opts.HTTPTitle
+	filter.Response = opts.Response
+
+	opts.filter = &filter
 }
 
 func (opts *Options) hasStdin() bool {
