@@ -27,6 +27,7 @@ type Options struct {
 	HTTPTitle         bool
 	HTTPStatusCode    bool
 	HTTPContentLength bool
+	BBQ               bool
 	outputFile        *os.File
 	outputWriter      io.Writer
 }
@@ -44,6 +45,7 @@ func ParseOptions() *Options {
 	flag.StringVar(&opts.Output, "o", "", "File to write output to (optional)")
 	flag.StringVar(&opts.DomainsFile, "dL", "", "File containing subdomains to query (optional)")
 	flag.BoolVar(&opts.JSONOutput, "json", false, "Print output as json")
+	flag.BoolVar(&opts.BBQ, "bbq", false, "Public bugbounty recon data")
 	flag.StringVar(&opts.DNSStatusCode, "dns-status-code", "", "Filter by dns status code")
 	flag.StringVar(&opts.DNSRecordType, "dns-record-type", "", "Filter by dns record type")
 	flag.BoolVar(&opts.FilterWildcard, "filter-wildcard", false, "Filter wildcards")

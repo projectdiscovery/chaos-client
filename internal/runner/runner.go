@@ -2,6 +2,7 @@ package runner
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"io"
 	"os"
@@ -73,7 +74,7 @@ func RunEnumeration(opts *Options) {
 }
 
 func processDomain(client *chaos.Client, opts *Options) {
-	req := &chaos.GetSubdomainsRequest{Domain: opts.Domain}
+	req := &chaos.SubdomainsRequest{Domain: opts.Domain}
 	if opts.JSONOutput {
 		req.OutputFormat = "json"
 	}
@@ -97,6 +98,35 @@ func processDomain(client *chaos.Client, opts *Options) {
 	}
 }
 
+func processBBQDomain(client *chaos.Client, opts *Options) {
+	req := &chaos.SubdomainsRequest{Domain: opts.Domain}
+	if opts.JSONOutput {
+		req.OutputFormat = "json"
+	}
+	for item := range client.GetBBQSubdomains(req) {
+		if item.Error != nil {
+			gologger.Fatalf("Could not get subdomains: %s\n", item.Error)
+		}
+		if opts.JSONOutput {
+			io.Copy(opts.outputWriter, *item.Reader)
+		} else {
+			var bbqresult chaos.BBQResult
+			if err := json.Unmarshal(item.Data, &bbqresult); err != nil {
+				gologger.Fatalf("Could not unmarshal response: %s\n", err)
+			}
+			// filters - TODO
+
+			// output - TODO
+			if opts.Output != "" {
+				_, err := fmt.Fprintf(opts.outputWriter, "")
+				if err != nil {
+					gologger.Fatalf("Could not write results to file %s for %s: %s\n", opts.Output, opts.Domain, err)
+				}
+			}
+		}
+	}
+}
+
 func processList(client *chaos.Client, opts *Options) {
 	var (
 		file *os.File
@@ -104,7 +134,7 @@ func processList(client *chaos.Client, opts *Options) {
 	)
 	if opts.hasStdin() {
 		file = os.Stdin
-	} else if opts.UploadFilename != "" {
+	} else if opts.UploadFilename != "" { // TODO - https://github.com/projectdiscovery/chaos-client/issues/19
 		file, err = os.Open(opts.UploadFilename)
 		if err != nil {
 			gologger.Fatalf("Could not open input file: %s\n", err)

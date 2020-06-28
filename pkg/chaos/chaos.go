@@ -1,6 +1,7 @@
 package chaos
 
 import (
+	"bufio"
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
@@ -73,8 +74,8 @@ func (c *Client) GetStatistics(req *GetStatisticsRequest) (*GetStatisticsRespons
 	return &response, nil
 }
 
-// GetSubdomainsRequest is the request for a host subdomains.
-type GetSubdomainsRequest struct {
+// SubdomainsRequest is the request for a host subdomains.
+type SubdomainsRequest struct {
 	Domain       string
 	OutputFormat string
 }
@@ -87,7 +88,7 @@ type Result struct {
 }
 
 // GetSubdomains returns the subdomains for a given domain.
-func (c *Client) GetSubdomains(req *GetSubdomainsRequest) chan *Result {
+func (c *Client) GetSubdomains(req *SubdomainsRequest) chan *Result {
 	results := make(chan *Result)
 	go func(results chan *Result) {
 		defer close(results)
@@ -133,6 +134,72 @@ func (c *Client) GetSubdomains(req *GetSubdomainsRequest) chan *Result {
 			}
 			d.Token()
 		}
+	}(results)
+
+	return results
+}
+
+type BBQData struct {
+	Domain            string   `json:"domain"`
+	Subdomain         string   `json:"subdomain"`
+	StatusCode        string   `json:"dns-status-code"`
+	A                 []string `json:"a,omitempty"`
+	CNAME             []string `json:"cname,omitempty"`
+	AAAA              []string `json:"aaaa,omitempty"`
+	MX                []string `json:"mx,omitempty"`
+	SOA               []string `json:"soa,omitempty"`
+	NS                []string `json:"ns,omitempty"`
+	Wildcard          bool     `json:"wildcard"`
+	HTTPUrl           string   `json:"http_url,omitempty"`
+	HTTPStatusCode    int      `json:"http_status_code,omitempty"`
+	HTTPContentLength int      `json:"http_content_length,omitempty"`
+	HTTPTitle         string   `json:"http_title,omitempty"`
+}
+
+type BBQResult struct {
+	Data   []byte
+	Reader *io.ReadCloser
+	Error  error
+}
+
+func (c *Client) GetBBQSubdomains(req *SubdomainsRequest) chan *BBQResult {
+	results := make(chan *BBQResult)
+	go func(results chan *BBQResult) {
+		defer close(results)
+
+		request, err := http.NewRequest("GET", fmt.Sprintf("https://dns.projectdiscovery.io/dns/%s/public-recon-data", req.Domain), nil)
+		if err != nil {
+			results <- &BBQResult{Error: errors.Wrap(err, "could not create request")}
+			return
+		}
+		request.Header.Set("Authorization", c.apiKey)
+
+		resp, err := c.httpClient.Do(request)
+		if err != nil {
+			results <- &BBQResult{Error: errors.Wrap(err, "could not make request")}
+			return
+		}
+
+		if resp.StatusCode != 200 {
+			body, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				results <- &BBQResult{Error: errors.Wrap(err, "could not read response")}
+				return
+			}
+			results <- &BBQResult{Error: fmt.Errorf("invalid status code received: %d - %s", resp.StatusCode, string(body))}
+			return
+		}
+
+		switch req.OutputFormat {
+		case "json":
+			results <- &BBQResult{Reader: &resp.Body}
+		default:
+			scanner := bufio.NewScanner(resp.Body)
+			for scanner.Scan() {
+				results <- &BBQResult{Data: scanner.Bytes()}
+			}
+		}
+
 	}(results)
 
 	return results
