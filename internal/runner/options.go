@@ -27,6 +27,7 @@ type Options struct {
 	HTTPStatusCode    int
 	HTTPContentLength bool
 	BBQ               bool
+	Version           bool
 	outputFile        *os.File
 	outputWriter      io.Writer
 	filter            *Filter
@@ -53,6 +54,7 @@ func ParseOptions() *Options {
 	flag.BoolVar(&opts.HTTPTitle, "http-title", false, "Print http homepage title if the fqdn exposes a web server")
 	flag.IntVar(&opts.HTTPStatusCode, "http-status-code", -1, "Print http status code if the fqdn exposes a web server")
 	flag.BoolVar(&opts.HTTPContentLength, "http-content-length", false, "Print http content length if the fqdn exposes a web server")
+	flag.BoolVar(&opts.Version, "version", false, "Show version of chaos")
 
 	flag.Parse()
 
@@ -60,6 +62,11 @@ func ParseOptions() *Options {
 		gologger.MaxLevel = gologger.Silent
 	}
 	showBanner()
+
+	if opts.Version {
+		gologger.Infof("Current Version: %s\n", Version)
+		os.Exit(0)
+	}
 
 	opts.validateOptions()
 
