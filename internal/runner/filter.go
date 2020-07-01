@@ -32,6 +32,7 @@ type Filter struct {
 	DNSRecordType     DNSRecordType
 	FilterWildcard    bool
 	Response          bool
+	ResponseOnly 		bool
 	HTTPUrl           bool
 	HTTPTitle         bool
 	HTTPStatusCode    bool
@@ -89,6 +90,19 @@ func extractOutput(data *chaos.BBQData, filter *Filter) string {
 	if filter.Response {
 		switch filter.DNSRecordType {
 		case A:
+			return strings.Join(prefixWith(data.A, data.Domain), "\n")
+		case AAAA:
+			return strings.Join(prefixWith(data.AAAA, data.Domain), "\n")
+		case CNAME:
+			return strings.Join(prefixWith(data.CNAME, data.Domain), "\n")
+		case NS:
+			return strings.Join(prefixWith(data.NS, data.Domain), "\n")
+		}
+	}
+
+	if filter.ResponseOnly {
+		switch filter.DNSRecordType {
+		case A:
 			return strings.Join(data.A, "\n")
 		case AAAA:
 			return strings.Join(data.AAAA, "\n")
@@ -121,4 +135,12 @@ func extractOutput(data *chaos.BBQData, filter *Filter) string {
 	
 	// default - print subdomain
 	return fmt.Sprintf("%s.%s", data.Subdomain, data.Domain)
+}
+
+func prefixWith(s []string, prefix string) []string {
+	for i,ss := range s {
+		s[i] = fmt.Sprintf("%s %s", prefix, ss )
+	}
+
+	return s
 }
