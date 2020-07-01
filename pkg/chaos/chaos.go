@@ -195,6 +195,9 @@ func (c *Client) GetBBQSubdomains(req *SubdomainsRequest) chan *BBQResult {
 			results <- &BBQResult{Reader: &resp.Body}
 		default:
 			scanner := bufio.NewScanner(resp.Body)
+			const maxCapacity = 1024*1024  
+			buf := make([]byte, maxCapacity)
+			scanner.Buffer(buf, maxCapacity)
 			for scanner.Scan() {
 				results <- &BBQResult{Data: scanner.Bytes()}
 			}

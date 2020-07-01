@@ -34,8 +34,13 @@ type Filter struct {
 	Response          bool
 	HTTPUrl           bool
 	HTTPTitle         bool
-	HTTPStatusCode    int
+	HTTPStatusCode    bool
+	HTTPStatusCodeValue    int
 	HTTPContentLength bool
+}
+
+func (f *Filter) isHTTPRequested() bool {
+	return f.HTTPUrl || f.HTTPTitle || f.HTTPStatusCode || f.HTTPContentLength
 }
 
 func applyFilter(data *chaos.BBQData, filter *Filter) bool {
@@ -72,7 +77,7 @@ func applyFilter(data *chaos.BBQData, filter *Filter) bool {
 	}
 
 	// http status code
-	if filter.HTTPStatusCode > 0 && filter.HTTPStatusCode != data.HTTPStatusCode {
+	if filter.HTTPStatusCodeValue > 0 && filter.HTTPStatusCodeValue != data.HTTPStatusCode {
 		return false
 	}
 
@@ -94,22 +99,26 @@ func extractOutput(data *chaos.BBQData, filter *Filter) string {
 		}
 	}
 
-	// http - flags
-	httpbuf := data.HTTPUrl
-	if filter.HTTPStatusCode >= 0 {
-		httpbuf += fmt.Sprintf(" [%d]", data.HTTPStatusCode)
+	if filter.isHTTPRequested() {
+		// http - flags
+		httpbuf := data.HTTPUrl
+		if filter.HTTPStatusCode {
+			httpbuf += fmt.Sprintf(" [%d]", data.HTTPStatusCode)
+		}
+		if filter.HTTPContentLength {
+			httpbuf += fmt.Sprintf(" [%d]", data.HTTPContentLength)
+		}
+		if filter.HTTPTitle {
+			httpbuf += fmt.Sprintf(" [%s]", data.HTTPTitle)
+		}
+		// if the url has been requested or some data added to the base one
+		if  (filter.HTTPUrl || len(httpbuf) != len(data.HTTPUrl)) && len(data.HTTPUrl)>0 {
+			return httpbuf
+		}
+		return ""
 	}
-	if filter.HTTPContentLength {
-		httpbuf += fmt.Sprintf(" [%d]", data.HTTPContentLength)
-	}
-	if filter.HTTPTitle {
-		httpbuf += fmt.Sprintf(" [%s]", data.HTTPTitle)
-	}
-	// if the url has been requested or some data added to the base one
-	if filter.HTTPUrl || len(httpbuf) != len(data.HTTPUrl) {
-		return httpbuf
-	}
-
+	
+	
 	// default - print subdomain
 	return fmt.Sprintf("%s.%s", data.Subdomain, data.Domain)
 }

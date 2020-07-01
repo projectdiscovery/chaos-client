@@ -101,14 +101,15 @@ func processBBQDomain(client *chaos.Client, opts *Options) {
 	if opts.JSONOutput {
 		req.OutputFormat = "json"
 	}
+	var outputLine string
 	for item := range client.GetBBQSubdomains(req) {
 		if item.Error != nil {
 			gologger.Fatalf("Could not get subdomains: %s\n", item.Error)
 		}
+		var bbqdata chaos.BBQData
 		if opts.JSONOutput {
 			io.Copy(opts.outputWriter, *item.Reader)
 		} else {
-			var bbqdata chaos.BBQData
 			if err := json.Unmarshal(item.Data, &bbqdata); err != nil {
 				gologger.Fatalf("Could not unmarshal response: %s\n", err)
 			}
@@ -116,10 +117,12 @@ func processBBQDomain(client *chaos.Client, opts *Options) {
 			if !applyFilter(&bbqdata, opts.filter) {
 				continue
 			}
-
-			_, err := fmt.Fprintf(opts.outputWriter, "%s\n", extractOutput(&bbqdata, opts.filter))
-			if err != nil {
-				gologger.Fatalf("Could not write results to file %s for %s: %s\n", opts.Output, opts.Domain, err)
+			outputLine = fmt.Sprintf(extractOutput(&bbqdata, opts.filter))
+			if outputLine != "" {
+				_, err := fmt.Fprintf(opts.outputWriter, "%s\n", outputLine)
+				if err != nil {
+					gologger.Fatalf("Could not write results to file %s for %s: %s\n", opts.Output, opts.Domain, err)
+				}
 			}
 		}
 	}

@@ -24,7 +24,8 @@ type Options struct {
 	Response          bool
 	HTTPUrl           bool
 	HTTPTitle         bool
-	HTTPStatusCode    int
+	HTTPStatusCode    bool
+	HTTPStatusCodeFilter   int
 	HTTPContentLength bool
 	BBQ               bool
 	Version           bool
@@ -52,7 +53,8 @@ func ParseOptions() *Options {
 	flag.BoolVar(&opts.Response, "resp", false, "Print record response")
 	flag.BoolVar(&opts.HTTPUrl, "http-url", false, "Print http url if the fqdn exposes a web server")
 	flag.BoolVar(&opts.HTTPTitle, "http-title", false, "Print http homepage title if the fqdn exposes a web server")
-	flag.IntVar(&opts.HTTPStatusCode, "http-status-code", -1, "Print http status code if the fqdn exposes a web server")
+	flag.BoolVar(&opts.HTTPStatusCode, "http-status-code", false, "Print http status code if the fqdn exposes a web server")
+	flag.IntVar(&opts.HTTPStatusCodeFilter, "http-status-code-filter", -1, "Print http status code if the value equals the specified one")
 	flag.BoolVar(&opts.HTTPContentLength, "http-content-length", false, "Print http content length if the fqdn exposes a web server")
 	flag.BoolVar(&opts.Version, "version", false, "Show version of chaos")
 
@@ -116,6 +118,7 @@ func (opts *Options) validateOptions() {
 	filter.FilterWildcard = opts.FilterWildcard
 	filter.HTTPContentLength = opts.HTTPContentLength
 	filter.HTTPStatusCode = opts.HTTPStatusCode
+	filter.HTTPStatusCodeValue = opts.HTTPStatusCodeFilter
 	filter.HTTPTitle = opts.HTTPTitle
 	filter.Response = opts.Response
 
