@@ -120,6 +120,7 @@ func (opts *Options) validateOptions() {
 	filter.HTTPStatusCode = opts.HTTPStatusCode
 	filter.HTTPStatusCodeValue = opts.HTTPStatusCodeFilter
 	filter.HTTPTitle = opts.HTTPTitle
+	filter.HTTPUrl = opts.HTTPUrl
 	filter.Response = opts.Response
 
 	opts.filter = &filter
