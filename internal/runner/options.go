@@ -22,6 +22,7 @@ type Options struct {
 	DNSRecordType     string
 	FilterWildcard    bool
 	Response          bool
+	ResponseOnly 	  bool
 	HTTPUrl           bool
 	HTTPTitle         bool
 	HTTPStatusCode    bool
@@ -51,6 +52,7 @@ func ParseOptions() *Options {
 	flag.StringVar(&opts.DNSRecordType, "dns-record-type", "", "Filter by dns record type")
 	flag.BoolVar(&opts.FilterWildcard, "filter-wildcard", false, "Filter wildcards")
 	flag.BoolVar(&opts.Response, "resp", false, "Print record response")
+	flag.BoolVar(&opts.ResponseOnly, "resp-only", false, "Print record response only")
 	flag.BoolVar(&opts.HTTPUrl, "http-url", false, "Print http url if the fqdn exposes a web server")
 	flag.BoolVar(&opts.HTTPTitle, "http-title", false, "Print http homepage title if the fqdn exposes a web server")
 	flag.BoolVar(&opts.HTTPStatusCode, "http-status-code", false, "Print http status code if the fqdn exposes a web server")
@@ -122,6 +124,7 @@ func (opts *Options) validateOptions() {
 	filter.HTTPTitle = opts.HTTPTitle
 	filter.HTTPUrl = opts.HTTPUrl
 	filter.Response = opts.Response
+	filter.ResponseOnly = opts.ResponseOnly
 
 	opts.filter = &filter
 }

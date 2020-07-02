@@ -28,16 +28,16 @@ const (
 )
 
 type Filter struct {
-	DNSStatusCode     DNSStatusCode
-	DNSRecordType     DNSRecordType
-	FilterWildcard    bool
-	Response          bool
-	ResponseOnly 		bool
-	HTTPUrl           bool
-	HTTPTitle         bool
-	HTTPStatusCode    bool
-	HTTPStatusCodeValue    int
-	HTTPContentLength bool
+	DNSStatusCode       DNSStatusCode
+	DNSRecordType       DNSRecordType
+	FilterWildcard      bool
+	Response            bool
+	ResponseOnly        bool
+	HTTPUrl             bool
+	HTTPTitle           bool
+	HTTPStatusCode      bool
+	HTTPStatusCodeValue int
+	HTTPContentLength   bool
 }
 
 func (f *Filter) isHTTPRequested() bool {
@@ -90,13 +90,13 @@ func extractOutput(data *chaos.BBQData, filter *Filter) string {
 	if filter.Response {
 		switch filter.DNSRecordType {
 		case A:
-			return strings.Join(prefixWith(data.A, data.Domain), "\n")
+			return strings.Join(prefixWith(data.A, data.Subdomain+"."+data.Domain), "\n")
 		case AAAA:
-			return strings.Join(prefixWith(data.AAAA, data.Domain), "\n")
+			return strings.Join(prefixWith(data.AAAA, data.Subdomain+"."+data.Domain), "\n")
 		case CNAME:
-			return strings.Join(prefixWith(data.CNAME, data.Domain), "\n")
+			return strings.Join(prefixWith(data.CNAME, data.Subdomain+"."+data.Domain), "\n")
 		case NS:
-			return strings.Join(prefixWith(data.NS, data.Domain), "\n")
+			return strings.Join(prefixWith(data.NS, data.Subdomain+"."+data.Domain), "\n")
 		}
 	}
 
@@ -126,20 +126,19 @@ func extractOutput(data *chaos.BBQData, filter *Filter) string {
 			httpbuf += fmt.Sprintf(" [%s]", data.HTTPTitle)
 		}
 		// if the url has been requested or some data added to the base one
-		if  (filter.HTTPUrl || len(httpbuf) != len(data.HTTPUrl)) && len(data.HTTPUrl)>0 {
+		if (filter.HTTPUrl || len(httpbuf) != len(data.HTTPUrl)) && len(data.HTTPUrl) > 0 {
 			return httpbuf
 		}
 		return ""
 	}
-	
-	
+
 	// default - print subdomain
 	return fmt.Sprintf("%s.%s", data.Subdomain, data.Domain)
 }
 
 func prefixWith(s []string, prefix string) []string {
-	for i,ss := range s {
-		s[i] = fmt.Sprintf("%s %s", prefix, ss )
+	for i, ss := range s {
+		s[i] = fmt.Sprintf("%s %s", prefix, ss)
 	}
 
 	return s
