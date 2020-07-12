@@ -32,7 +32,7 @@ This will display help for the tool. Here are all the switches it supports.
 | -http-url | Print URL of the subdomains                  | chaos -bbq -d uber.com -http-url |
 | -http-title | Print title of the URL                   | chaos -bbq -d uber.com -http-title |
 | -http-status-code | Print http status code                   | chaos -bbq -d uber.com -http-status-code |
-| -http-status-code-filter | Filter http status code                   | chaos -bbq -d uber.com -http-status-code http-status-code-filter 200 |
+| -http-status-code-filter | Filter http status code                   | chaos -bbq -d uber.com -http-status-code -http-status-code-filter 200 |
 | -resp | Print DNS record with response                 | chaos -bbq -d uber.com -resp |
 | -resp-only | Print the response of DNS record                   | chaos -bbq -d uber.com -dns-record-type cname -resp-only |
 | -silent | Make the output silent                   | chaos -d uber.com -silent |
