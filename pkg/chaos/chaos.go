@@ -49,27 +49,27 @@ type GetStatisticsResponse struct {
 func (c *Client) GetStatistics(req *GetStatisticsRequest) (*GetStatisticsResponse, error) {
 	request, err := http.NewRequest("GET", fmt.Sprintf("https://dns.projectdiscovery.io/dns/%s", req.Domain), nil)
 	if err != nil {
-		return nil, errors.Wrap(err, "could not create request")
+		return nil, errors.Wrap(err, "could not create request.")
 	}
 	request.Header.Set("Authorization", c.apiKey)
 
 	resp, err := c.httpClient.Do(request)
 	if err != nil {
-		return nil, errors.Wrap(err, "could not make request")
+		return nil, errors.Wrap(err, "could not make request.")
 	}
 
 	if resp.StatusCode != 200 {
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			return nil, errors.Wrap(err, "could not read response")
+			return nil, errors.Wrap(err, "could not read response.")
 		}
-		return nil, fmt.Errorf("invalid status code received: %d - %s", resp.StatusCode, string(body))
+		return nil, fmt.Errorf("Invalid status code received: %d - %s", resp.StatusCode, string(body))
 	}
 
 	response := GetStatisticsResponse{}
 	err = jsoniter.NewDecoder(resp.Body).Decode(&response)
 	if err != nil {
-		return nil, errors.Wrap(err, "could not unmarshal results")
+		return nil, errors.Wrap(err, "could not unmarshal results.")
 	}
 	return &response, nil
 }
@@ -95,24 +95,24 @@ func (c *Client) GetSubdomains(req *SubdomainsRequest) chan *Result {
 
 		request, err := http.NewRequest("GET", fmt.Sprintf("https://dns.projectdiscovery.io/dns/%s/subdomains", req.Domain), nil)
 		if err != nil {
-			results <- &Result{Error: errors.Wrap(err, "could not create request")}
+			results <- &Result{Error: errors.Wrap(err, "could not create request.")}
 			return
 		}
 		request.Header.Set("Authorization", c.apiKey)
 
 		resp, err := c.httpClient.Do(request)
 		if err != nil {
-			results <- &Result{Error: errors.Wrap(err, "could not make request")}
+			results <- &Result{Error: errors.Wrap(err, "could not make request.")}
 			return
 		}
 
 		if resp.StatusCode != 200 {
 			body, err := ioutil.ReadAll(resp.Body)
 			if err != nil {
-				results <- &Result{Error: errors.Wrap(err, "could not read response")}
+				results <- &Result{Error: errors.Wrap(err, "could not read response.")}
 				return
 			}
-			results <- &Result{Error: fmt.Errorf("invalid status code received: %d - %s", resp.StatusCode, string(body))}
+			results <- &Result{Error: fmt.Errorf("Invalid status code received: %d - %s", resp.StatusCode, string(body))}
 			return
 		}
 
@@ -169,24 +169,24 @@ func (c *Client) GetBBQSubdomains(req *SubdomainsRequest) chan *BBQResult {
 
 		request, err := http.NewRequest("GET", fmt.Sprintf("https://dns.projectdiscovery.io/dns/%s/public-recon-data", req.Domain), nil)
 		if err != nil {
-			results <- &BBQResult{Error: errors.Wrap(err, "could not create request")}
+			results <- &BBQResult{Error: errors.Wrap(err, "could not create request.")}
 			return
 		}
 		request.Header.Set("Authorization", c.apiKey)
 
 		resp, err := c.httpClient.Do(request)
 		if err != nil {
-			results <- &BBQResult{Error: errors.Wrap(err, "could not make request")}
+			results <- &BBQResult{Error: errors.Wrap(err, "could not make request.")}
 			return
 		}
 
 		if resp.StatusCode != 200 {
 			body, err := ioutil.ReadAll(resp.Body)
 			if err != nil {
-				results <- &BBQResult{Error: errors.Wrap(err, "could not read response")}
+				results <- &BBQResult{Error: errors.Wrap(err, "could not read response.")}
 				return
 			}
-			results <- &BBQResult{Error: fmt.Errorf("invalid status code received: %d - %s", resp.StatusCode, string(body))}
+			results <- &BBQResult{Error: fmt.Errorf("Invalid status code received: %d - %s", resp.StatusCode, string(body))}
 			return
 		}
 
@@ -220,22 +220,22 @@ type PutSubdomainsResponse struct{}
 func (c *Client) PutSubdomains(req *PutSubdomainsRequest) (*PutSubdomainsResponse, error) {
 	request, err := http.NewRequest("POST", "https://dns.projectdiscovery.io/dns/add", req.Contents)
 	if err != nil {
-		return nil, errors.Wrap(err, "could not create request")
+		return nil, errors.Wrap(err, "could not create request.")
 	}
 	request.Header.Set("Authorization", c.apiKey)
 
 	resp, err := c.httpClient.Do(request)
 	if err != nil {
-		return nil, errors.Wrap(err, "could not make request")
+		return nil, errors.Wrap(err, "could not make request.")
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			return nil, errors.Wrap(err, "could not read response")
+			return nil, errors.Wrap(err, "could not read response.")
 		}
-		return nil, fmt.Errorf("invalid status code received: %d - %s", resp.StatusCode, string(body))
+		return nil, fmt.Errorf("Invalid status code received: %d - %s", resp.StatusCode, string(body))
 	}
 	io.Copy(ioutil.Discard, resp.Body)
 	return &PutSubdomainsResponse{}, nil
