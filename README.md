@@ -16,27 +16,27 @@ Go client to communicate with Chaos dataset API.
 
 This will display help for the tool. Here are all the switches it supports.
 
-| Flag    | Description                              | Example                   |
-|---------|------------------------------------------|---------------------------|
-| -d      | Domain to find subdomains for          | chaos -d uber.com         |
-| -bbq    | Bugbounty recon data query            | chaos -bbq -d uber.com         |
-| -count  | Show statistics for the specified domain | chaos -d uber.com -count  |
-| -o      | File to write output to (optional)       | chaos -d uber.com -o uber.txt  |
-| -json | Print output as json                  | chaos -d uber.com -json |
-| -update | Upload subdomains from stdin or filename     | chaos -update subdomains.txt   |
-| -key    | Chaos key for API                        | chaos -key API_KEY        |
-| -dL | File containing subdomains to query (optional)      | chaos -dL domains.txt |
-| -dns-record-type | Filter by dns record type                   | chaos -bbq -d uber.com -dns-record-type cname |
-| -dns-status-code | Filter by dns status code                   | chaos -bbq -d uber.com -dns-status-code noerror |
-| -filter-wildcard | Filter DNS wildcards                   | chaos -bbq -d uber.com -filter-wildcard |
-| -http-url | Print URL of the subdomains                  | chaos -bbq -d uber.com -http-url |
-| -http-title | Print title of the URL                   | chaos -bbq -d uber.com -http-title |
-| -http-status-code | Print http status code                   | chaos -bbq -d uber.com -http-status-code |
-| -http-status-code-filter | Filter http status code                   | chaos -bbq -d uber.com -http-status-code -http-status-code-filter 200 |
-| -resp | Print DNS record with response                 | chaos -bbq -d uber.com -resp |
-| -resp-only | Print the response of DNS record                   | chaos -bbq -d uber.com -dns-record-type cname -resp-only |
-| -silent | Make the output silent                   | chaos -d uber.com -silent |
-| -version | Print current version of chaos client                  | chaos -version |
+| Flag                     | Description                              | Example                                                      |
+| ------------------------ | ---------------------------------------- | ------------------------------------------------------------ |
+| -d                       | Domain to find subdomains for            | chaos -d uber.com                                            |
+| -bbq                     | Bugbounty recon data query               | chaos -bbq -d uber.com                                       |
+| -count                   | Show statistics for the specified domain | chaos -d uber.com -count                                     |
+| -o                       | File to write output to (optional)       | chaos -d uber.com -o uber.txt                                |
+| -json                    | Print output as json                     | chaos -d uber.com -json                                      |
+| -update                  | Update subs to chaos dataset             | chaos -update subdomains.txt                                 |
+| -key                     | Chaos key for API                        | chaos -key API_KEY                                           |
+| -dL                      | File with list of domains (optional)     | chaos -dL domains.txt                                        |
+| -dns-record-type         | Filter by dns record type                | chaos -bbq -d uber.com -dns-record-type cname                |
+| -dns-status-code         | Filter by dns status code                | chaos -bbq -d uber.com -dns-status-code noerror              |
+| -filter-wildcard         | Filter DNS wildcards                     | chaos -bbq -d uber.com -filter-wildcard                      |
+| -http-url                | Print URL of the subdomains              | chaos -bbq -d uber.com -http-url                             |
+| -http-title              | Print title of the URL                   | chaos -bbq -d uber.com -http-title                           |
+| -http-status-code        | Print http status code                   | chaos -bbq -d uber.com -http-status-code                     |
+| -http-status-code-filter | Filter http status code                  | chaos -bbq -d uber.com -http-status-code-filter 200 		 |
+| -resp                    | Print DNS record with response           | chaos -bbq -d uber.com -resp                                 |
+| -resp-only               | Print the response of DNS record         | chaos -bbq -d uber.com -dns-record-type cname -resp-only     |
+| -silent                  | Make the output silent                   | chaos -d uber.com -silent                                    |
+| -version                 | Print current version of chaos client    | chaos -version                                               |
 
 
 You can also set the API key as environment variable in your bash profile. 
