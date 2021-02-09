@@ -28,14 +28,20 @@ const (
 )
 
 type Filter struct {
-	DNSStatusCode     DNSStatusCode
-	DNSRecordType     DNSRecordType
-	FilterWildcard    bool
-	Response          bool
-	HTTPUrl           bool
-	HTTPTitle         bool
-	HTTPStatusCode    int
-	HTTPContentLength bool
+	DNSStatusCode       DNSStatusCode
+	DNSRecordType       DNSRecordType
+	FilterWildcard      bool
+	Response            bool
+	ResponseOnly        bool
+	HTTPUrl             bool
+	HTTPTitle           bool
+	HTTPStatusCode      bool
+	HTTPStatusCodeValue int
+	HTTPContentLength   bool
+}
+
+func (f *Filter) isHTTPRequested() bool {
+	return f.HTTPUrl || f.HTTPTitle || f.HTTPStatusCode || f.HTTPContentLength
 }
 
 func applyFilter(data *chaos.BBQData, filter *Filter) bool {
@@ -43,18 +49,17 @@ func applyFilter(data *chaos.BBQData, filter *Filter) bool {
 	if filter.FilterWildcard && data.Wildcard {
 		return false
 	}
-
 	// dns status code
-	if filter.DNSStatusCode == NOERROR && data.StatusCode != "noerror" {
+	if filter.DNSStatusCode == NOERROR && data.StatusCode != "NOERROR" {
 		return false
 	}
-	if filter.DNSStatusCode == NXDOMAIN && data.StatusCode != "nxdomain" {
+	if filter.DNSStatusCode == NXDOMAIN && data.StatusCode != "NXDOMAIN" {
 		return false
 	}
-	if filter.DNSStatusCode == SERVFAIL && data.StatusCode != "servfail" {
+	if filter.DNSStatusCode == SERVFAIL && data.StatusCode != "SERVFAIL" {
 		return false
 	}
-	if filter.DNSStatusCode == REFUSED && data.StatusCode != "refused" {
+	if filter.DNSStatusCode == REFUSED && data.StatusCode != "REFUSED" {
 		return false
 	}
 
@@ -73,7 +78,7 @@ func applyFilter(data *chaos.BBQData, filter *Filter) bool {
 	}
 
 	// http status code
-	if filter.HTTPStatusCode > 0 && filter.HTTPStatusCode != data.HTTPStatusCode {
+	if filter.HTTPStatusCodeValue > 0 && filter.HTTPStatusCodeValue != data.HTTPStatusCode {
 		return false
 	}
 
@@ -83,6 +88,19 @@ func applyFilter(data *chaos.BBQData, filter *Filter) bool {
 func extractOutput(data *chaos.BBQData, filter *Filter) string {
 	// dns - response
 	if filter.Response {
+		switch filter.DNSRecordType {
+		case A:
+			return strings.Join(prefixWith(data.A, data.Subdomain+"."+data.Domain), "\n")
+		case AAAA:
+			return strings.Join(prefixWith(data.AAAA, data.Subdomain+"."+data.Domain), "\n")
+		case CNAME:
+			return strings.Join(prefixWith(data.CNAME, data.Subdomain+"."+data.Domain), "\n")
+		case NS:
+			return strings.Join(prefixWith(data.NS, data.Subdomain+"."+data.Domain), "\n")
+		}
+	}
+
+	if filter.ResponseOnly {
 		switch filter.DNSRecordType {
 		case A:
 			return strings.Join(data.A, "\n")
@@ -95,22 +113,33 @@ func extractOutput(data *chaos.BBQData, filter *Filter) string {
 		}
 	}
 
-	// http - flags
-	httpbuf := data.HTTPUrl
-	if filter.HTTPStatusCode >= 0 {
-		httpbuf += fmt.Sprintf(" [%d]", data.HTTPStatusCode)
-	}
-	if filter.HTTPContentLength {
-		httpbuf += fmt.Sprintf(" [%d]", data.HTTPContentLength)
-	}
-	if filter.HTTPTitle {
-		httpbuf += fmt.Sprintf(" [%s]", data.HTTPTitle)
-	}
-	// if the url has been requested or some data added to the base one
-	if filter.HTTPUrl || len(httpbuf) != len(data.HTTPUrl) {
-		return httpbuf
+	if filter.isHTTPRequested() {
+		// http - flags
+		httpbuf := data.HTTPUrl
+		if filter.HTTPStatusCode {
+			httpbuf += fmt.Sprintf(" [%d]", data.HTTPStatusCode)
+		}
+		if filter.HTTPContentLength {
+			httpbuf += fmt.Sprintf(" [%d]", data.HTTPContentLength)
+		}
+		if filter.HTTPTitle {
+			httpbuf += fmt.Sprintf(" [%s]", data.HTTPTitle)
+		}
+		// if the url has been requested or some data added to the base one
+		if (filter.HTTPUrl || len(httpbuf) != len(data.HTTPUrl)) && len(data.HTTPUrl) > 0 {
+			return httpbuf
+		}
+		return ""
 	}
 
 	// default - print subdomain
 	return fmt.Sprintf("%s.%s", data.Subdomain, data.Domain)
+}
+
+func prefixWith(s []string, prefix string) []string {
+	for i, ss := range s {
+		s[i] = fmt.Sprintf("%s %s", prefix, ss)
+	}
+
+	return s
 }

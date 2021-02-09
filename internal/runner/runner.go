@@ -26,8 +26,7 @@ func RunEnumeration(opts *Options) {
 		return
 	}
 
-	var outputWriters []io.Writer
-
+	outputWriters := []io.Writer{os.Stdout}
 	if opts.Output != "" {
 		var err error
 		opts.outputFile, err = os.Create(opts.Output)
@@ -37,15 +36,14 @@ func RunEnumeration(opts *Options) {
 		defer opts.outputFile.Close()
 		outputWriters = append(outputWriters, opts.outputFile)
 	}
-
-	if opts.JSONOutput {
-		outputWriters = append(outputWriters, os.Stdout)
-	}
-
 	opts.outputWriter = io.MultiWriter(outputWriters...)
 
 	if opts.Domain != "" {
-		processDomain(client, opts)
+		if opts.BBQ {
+			processBBQDomain(client, opts)
+		} else {
+			processDomain(client, opts)
+		}
 	}
 
 	if opts.hasStdin() || opts.DomainsFile != "" {
@@ -85,15 +83,16 @@ func processBBQDomain(client *chaos.Client, opts *Options) {
 	if opts.JSONOutput {
 		req.OutputFormat = "json"
 	}
+	var outputLine string
 	for item := range client.GetBBQSubdomains(req) {
 		if item.Error != nil {
 			gologger.Errorf("Could not get subdomains: %s\n", item.Error)
 			break
 		}
+		var bbqdata chaos.BBQData
 		if opts.JSONOutput {
 			io.Copy(opts.outputWriter, *item.Reader)
 		} else {
-			var bbqdata chaos.BBQData
 			if err := json.Unmarshal(item.Data, &bbqdata); err != nil {
 				gologger.Errorf("Could not unmarshal response: %s\n", err)
 				break
@@ -102,9 +101,9 @@ func processBBQDomain(client *chaos.Client, opts *Options) {
 			if !applyFilter(&bbqdata, opts.filter) {
 				continue
 			}
-
-			if opts.Output != "" {
-				_, err := fmt.Fprintf(opts.outputWriter, extractOutput(&bbqdata, opts.filter))
+			outputLine = fmt.Sprintf(extractOutput(&bbqdata, opts.filter))
+			if outputLine != "" {
+				_, err := fmt.Fprintf(opts.outputWriter, "%s\n", outputLine)
 				if err != nil {
 					gologger.Errorf("Could not write results to file %s for %s: %s\n", opts.Output, opts.Domain, err)
 					break
@@ -131,6 +130,10 @@ func processList(client *chaos.Client, opts *Options) {
 	in := bufio.NewScanner(file)
 	for in.Scan() {
 		opts.Domain = in.Text()
-		processDomain(client, opts)
+		if opts.BBQ {
+			processBBQDomain(client, opts)
+		} else {
+			processDomain(client, opts)
+		}
 	}
 }

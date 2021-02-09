@@ -1,3 +1,10 @@
+[![License](https://img.shields.io/badge/license-MIT-_red.svg)](https://opensource.org/licenses/MIT)
+[![Go Report Card](https://goreportcard.com/badge/github.com/projectdiscovery/chaos-client)](https://goreportcard.com/report/github.com/projectdiscovery/chaos-client)
+[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/projectdiscovery/chaos-client/issues)
+[![GitHub Release](https://img.shields.io/github/release/projectdiscovery/chaos-client)](https://github.com/projectdiscovery/chaos-client/releases)
+[![Follow on Twitter](https://img.shields.io/twitter/follow/pdchaos.svg?logo=twitter)](https://twitter.com/pdchaos)
+[![Chat on Discord](https://img.shields.io/discord/695645237418131507.svg?logo=discord)](https://discord.gg/KECAGdH)
+
 # Chaos
 
 Go client to communicate with Chaos dataset API. 
@@ -5,108 +12,99 @@ Go client to communicate with Chaos dataset API.
 ## Installation:- 
 
 ```bash
-> GO111MODULE=on go get -u github.com/projectdiscovery/chaos-client/cmd/chaos
+▶ GO111MODULE=on go get -v github.com/projectdiscovery/chaos-client/cmd/chaos
 ```
 
 ## Usage:- 
 
 ```bash
-> chaos -h
+▶ chaos -h
 ```
 
 This will display help for the tool. Here are all the switches it supports.
 
-| Flag    | Description                              | Example                   |
-|---------|------------------------------------------|---------------------------|
-| -d      | Domain to find subdomains for            | chaos -d uber.com         |
-| -count  | Show statistics for the specified domain | chaos -d uber.com -count  |
-| -o      | File to write output to (optional)       | chaos -d uber.com -o uber.txt  |
-| -f      | File containing subdomains to upload     | chaos -f subdomains.txt   |
-| -key    | Chaos key for API                        | chaos -key API_KEY        |
-| -silent | Make the output silent                   | chaos -d uber.com -silent |
+| Flag                     | Description                              | Example                                                  |
+| ------------------------ | ---------------------------------------- | -------------------------------------------------------- |
+| -d                       | Domain to find subdomains for            | chaos -d uber.com                                        |
+| -count                   | Show statistics for the specified domain | chaos -d uber.com -count                                 |
+| -o                       | File to write output to (optional)       | chaos -d uber.com -o uber.txt                            |
+| -json                    | Print output as json                     | chaos -d uber.com -json                                  |
+| -key                     | Chaos key for API                        | chaos -key API_KEY                                       |
+| -dL                      | File with list of domains (optional)     | chaos -dL domains.txt                                    |
+| -dns-record-type         | Filter by dns record type                | chaos -bbq -d uber.com -dns-record-type cname            |
+| -dns-status-code         | Filter by dns status code                | chaos -bbq -d uber.com -dns-status-code noerror          |
+| -filter-wildcard         | Filter DNS wildcards                     | chaos -bbq -d uber.com -filter-wildcard                  |
+| -http-url                | Print URL of the subdomains              | chaos -bbq -d uber.com -http-url                         |
+| -http-title              | Print title of the URL                   | chaos -bbq -d uber.com -http-title                       |
+| -http-status-code        | Print http status code                   | chaos -bbq -d uber.com -http-status-code                 |
+| -http-status-code-filter | Filter http status code                  | chaos -bbq -d uber.com -http-status-code-filter 200      |
+| -resp                    | Print DNS record with response           | chaos -bbq -d uber.com -resp                             |
+| -resp-only               | Print the response of DNS record         | chaos -bbq -d uber.com -dns-record-type cname -resp-only |
+| -silent                  | Make the output silent                   | chaos -d uber.com -silent                                |
+| -version                 | Print current version of chaos client    | chaos -version                                           |
+
 
 You can also set the API key as environment variable in your bash profile. 
 
 ```bash
-export CHAOS_KEY="CHAOS_API_KEY"
+export CHAOS_KEY=CHAOS_API_KEY
 ```
 
 ### How to avail `API_KEY`
 
-As of now Chaos dataset is in beta for testing and API endpoint access available to invited users only, you can request an invite for yourself [here](https://forms.gle/LkHUjoxAiHE6djtU6), we are sending out invites in FIFO manner, so we have no ETA.  
+As of now Chaos dataset is in beta for testing and API endpoint access available to invited users only, you can request an invite for yourself [here](https://forms.gle/GP5nTamxJPfiMaBn9), we are sending out new invites every 2nd monday of the month, singed up and still missing the invites? feel free to shoot us a DM is our [Discord](https://discord.gg/KECAGdH) server.
 
 # Running chaos
 
 In order to get subdomains for a domain, use the following command.
 
 ```bash
-> chaos -d aol.com -silent 
-load.on.aol.com
-kdc.uas.aol.com
-winappsvp.gwinappsvp.ops.aol.com
-webmail-a03.webmail.aol.com
-qa.cms.aol.com
-dpm-lm12.websys.aol.com
-games.egslb.aol.com
-hotsearches.aol.com
-hp.aol.com
-hp-desktop.estage.aol.com
-prop-w-a-mtc02.evip.aol.com
-223e7.ipt.aol.com
-hostheader.aol.com
+▶ chaos -d uber.com -silent
+
+restaurants.uber.com
+testcdn.uber.com
+approvalservice.uber.com
+zoom-logs.uber.com
+eastwood.uber.com
+meh.uber.com
+webview.uber.com
+kiosk-api.uber.com
+utmbeta-staging.uber.com
+getmatched-staging.uber.com
+logs.uber.com
+dca1.cfe.uber.com
+cn-staging.uber.com
+frontends-primary.uber.com
+eng.uber.com
+guest.uber.com
+kiosk-home-staging.uber.com
 ```
 
-NOTE:- 
-
-**Chaos dataset endpoint supports "domain" name as input, "string" or "subdomain" based searches are not supported.**   
-
-To get the number of subdomains without getting actual results, you can use the `count` flag.
+To get the number of subdomains count, you can use the `count` flag.
 
 ```bash
-> chaos -d aol.com -count -silent 
-10640320
+▶ chaos -d uber.com -count -silent
+
+7685
 ```
 
-Additional subdomains can also be uploaded to the API using the `update` flag. Uploads are limited to 10 MB as of now. The uploaded data will be added to the public dataset and is completely voluntary. 
 
-NOTE:- 
+👨‍💻 Community
+-----
 
-**Only subdomains with valid record gets added to dataset, subdomains with dead records gets eliminated**   
+You are welcomed to join our [Discord Community](https://discord.gg/KECAGdH). You can also follow us on [Twitter](https://twitter.com/pdchaos) to keep up with everything related to chaos project.
+
+💡 Notes
+-----
+
+- The API is rate-limited to 1 request at a time per token.
+- Chaos API **only** supports domain name to query.
+- Chaos recon data can be retrieved using `bbq` flag.
+
+📌 Reference
+-----
+
+- [Chaos Recon Data](https://blog.projectdiscovery.io/post/chaos-recon-data/)
 
 
-```bash
-> cat subs.txt | chaos -update
-
-        __                    
-  _____/ /_  ____ _____  _____
- / ___/ __ \/ __  / __ \/ ___/
-/ /__/ / / / /_/ / /_/ (__  ) 
-\___/_/ /_/\__,_/\____/____/  v1
-
-		projectdiscovery.io
-
-[WRN] Use with caution. You are responsible for your actions
-[WRN] Developers assume no liability and are not responsible for any misuse or damage.
-[INF] Input processed successfully and subdomains with valid records will be updated to chaos dataset.
-```
-Subfinder also supports updating data to chaos dataset and can be queried later on the go. 
-
-```bash
-> cat domains.txt | subfinder -cd
-
-        __                    
-  _____/ /_  ____ _____  _____
- / ___/ __ \/ __  / __ \/ ___/
-/ /__/ / / / /_/ / /_/ (__  ) 
-\___/_/ /_/\__,_/\____/____/  v1
-
-		projectdiscovery.io
-
-[WRN] Use with caution. You are responsible for your actions
-[WRN] Developers assume no liability and are not responsible for any misuse or damage.
-[INF] Input processed successfully and subdomains with valid records will be updated to chaos dataset.
-```
-
-NOTE: 
-
-**The API is rate-limited to 1 request at time per token (you can issue the next request only when the previous one is finished).**
+Thanks again for your contribution and keeping the community vibrant. :heart:
