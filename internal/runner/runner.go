@@ -14,26 +14,6 @@ import (
 // RunEnumeration runs the enumeration for Chaos client
 func RunEnumeration(opts *Options) {
 	client := chaos.New(opts.APIKey)
-	if opts.Update == "" && opts.hasStdin() {
-		if _, err := client.PutSubdomains(&chaos.PutSubdomainsRequest{Contents: os.Stdin}); err != nil {
-			gologger.Fatalf("Could not upload subdomains: %s\n", err)
-		}
-		gologger.Infof("Input processed successfully and subdomains with valid records will be updated to chaos dataset.")
-		return
-	}
-	if opts.Update != "" {
-		file, err := os.Open(opts.Update)
-		if err != nil {
-			gologger.Fatalf("Could not open input file: %s\n", err)
-		}
-		defer file.Close()
-
-		if _, err = client.PutSubdomains(&chaos.PutSubdomainsRequest{Contents: file}); err != nil {
-			gologger.Fatalf("Could not upload subdomains: %s\n", err)
-		}
-		gologger.Infof("File processed successfully and subdomains with valid records will be updated to chaos dataset.")
-		return
-	}
 
 	if opts.Count {
 		resp, err := client.GetStatistics(&chaos.GetStatisticsRequest{
@@ -80,7 +60,8 @@ func processDomain(client *chaos.Client, opts *Options) {
 	}
 	for item := range client.GetSubdomains(req) {
 		if item.Error != nil {
-			gologger.Fatalf("Could not get subdomains: %s\n", item.Error)
+			gologger.Errorf("Could not get subdomains for %s: %s\n", opts.Domain, item.Error)
+			break
 		}
 		if opts.JSONOutput {
 			io.Copy(opts.outputWriter, *item.Reader)
@@ -91,7 +72,8 @@ func processDomain(client *chaos.Client, opts *Options) {
 			if opts.Output != "" {
 				_, err := fmt.Fprintf(opts.outputWriter, "%s.%s\n", item.Subdomain, opts.Domain)
 				if err != nil {
-					gologger.Fatalf("Could not write results to file %s for %s: %s\n", opts.Output, opts.Domain, err)
+					gologger.Errorf("Could not write results to file %s for %s: %s\n", opts.Output, opts.Domain, err)
+					break
 				}
 			}
 		}
@@ -105,14 +87,16 @@ func processBBQDomain(client *chaos.Client, opts *Options) {
 	}
 	for item := range client.GetBBQSubdomains(req) {
 		if item.Error != nil {
-			gologger.Fatalf("Could not get subdomains: %s\n", item.Error)
+			gologger.Errorf("Could not get subdomains: %s\n", item.Error)
+			break
 		}
 		if opts.JSONOutput {
 			io.Copy(opts.outputWriter, *item.Reader)
 		} else {
 			var bbqdata chaos.BBQData
 			if err := json.Unmarshal(item.Data, &bbqdata); err != nil {
-				gologger.Fatalf("Could not unmarshal response: %s\n", err)
+				gologger.Errorf("Could not unmarshal response: %s\n", err)
+				break
 			}
 			// filters
 			if !applyFilter(&bbqdata, opts.filter) {
@@ -122,7 +106,8 @@ func processBBQDomain(client *chaos.Client, opts *Options) {
 			if opts.Output != "" {
 				_, err := fmt.Fprintf(opts.outputWriter, extractOutput(&bbqdata, opts.filter))
 				if err != nil {
-					gologger.Fatalf("Could not write results to file %s for %s: %s\n", opts.Output, opts.Domain, err)
+					gologger.Errorf("Could not write results to file %s for %s: %s\n", opts.Output, opts.Domain, err)
+					break
 				}
 			}
 		}
@@ -130,18 +115,17 @@ func processBBQDomain(client *chaos.Client, opts *Options) {
 }
 
 func processList(client *chaos.Client, opts *Options) {
-	var (
-		file *os.File
-		err  error
-	)
+	var file *os.File
+	var err error
+
 	if opts.hasStdin() {
 		file = os.Stdin
-	} else if opts.Update != "" {
+	}
+	if opts.DomainsFile != "" {
 		file, err = os.Open(opts.DomainsFile)
-		if err != nil {
-			gologger.Fatalf("Could not open input file: %s\n", err)
-		}
-		defer file.Close()
+	}
+	if err != nil {
+		gologger.Fatalf("Could not read domain list: %s\n", err)
 	}
 
 	in := bufio.NewScanner(file)
