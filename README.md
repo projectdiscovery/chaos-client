@@ -104,7 +104,7 @@ You are welcomed to join our [Discord Community](https://discord.gg/KECAGdH). Yo
 📌 Reference
 -----
 
-- [Chaos Recon Data](https://blog.projectdiscovery.io/post/chaos-recon-data/)
+- [Introducing Chaos Recon data API](https://blog.projectdiscovery.io/introducing-chaos-bug-bounty-recon-data-api)
 
 
 Thanks again for your contribution and keeping the community vibrant. :heart:
