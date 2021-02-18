@@ -6,32 +6,33 @@ import (
 	"os"
 
 	"github.com/projectdiscovery/gologger"
+	"github.com/projectdiscovery/gologger/levels"
 )
 
 // Options contains configuration options for chaos client.
 type Options struct {
-	APIKey            string
-	Domain            string
-	Count             bool
-	Silent            bool
-	Output            string
-	DomainsFile       string
-	JSONOutput        bool
-	DNSStatusCode     string
-	DNSRecordType     string
-	FilterWildcard    bool
-	Response          bool
-	ResponseOnly 	  bool
-	HTTPUrl           bool
-	HTTPTitle         bool
-	HTTPStatusCode    bool
-	HTTPStatusCodeFilter   int
-	HTTPContentLength bool
-	BBQ               bool
-	Version           bool
-	outputFile        *os.File
-	outputWriter      io.Writer
-	filter            *Filter
+	APIKey               string
+	Domain               string
+	Count                bool
+	Silent               bool
+	Output               string
+	DomainsFile          string
+	JSONOutput           bool
+	DNSStatusCode        string
+	DNSRecordType        string
+	FilterWildcard       bool
+	Response             bool
+	ResponseOnly         bool
+	HTTPUrl              bool
+	HTTPTitle            bool
+	HTTPStatusCode       bool
+	HTTPStatusCodeFilter int
+	HTTPContentLength    bool
+	BBQ                  bool
+	Version              bool
+	outputFile           *os.File
+	outputWriter         io.Writer
+	filter               *Filter
 }
 
 // ParseOptions parses the command line options for application
@@ -61,12 +62,12 @@ func ParseOptions() *Options {
 	flag.Parse()
 
 	if opts.Silent {
-		gologger.MaxLevel = gologger.Silent
+		gologger.DefaultLogger.SetMaxLevel(levels.LevelSilent)
 	}
 	showBanner()
 
 	if opts.Version {
-		gologger.Infof("Current Version: %s\n", Version)
+		gologger.Info().Msgf("Current Version: %s\n", Version)
 		os.Exit(0)
 	}
 
@@ -81,11 +82,11 @@ func (opts *Options) validateOptions() {
 	}
 
 	if opts.APIKey == "" {
-		gologger.Fatalf("Authorization token not specified\n")
+		gologger.Fatal().Msgf("Authorization token not specified\n")
 	}
 
 	if opts.Domain == "" && opts.DomainsFile == "" && !opts.hasStdin() {
-		gologger.Fatalf("No input specified for the API\n")
+		gologger.Fatal().Msgf("No input specified for the API\n")
 	}
 
 	var filter Filter
