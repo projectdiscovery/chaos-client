@@ -13,7 +13,7 @@ jobs:
       #pre: echo ::save-state name=RELEASE_VERSION::$(echo ${GITHUB_REF:10})
       uses: elgohr/Publish-Docker-Github-Action@master
       with:
-        name: projectdiscovery/nuclei
+        name: projectdiscovery/chaos
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         tags: "latest" #"latest,${{ env.STATE_RELEASE_VERSION }}"
