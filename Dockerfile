@@ -1,14 +1,7 @@
-FROM golang:1.14-alpine AS builder
-COPY . /app
-WORKDIR /app
-RUN go get ./cmd/chaos
-RUN go build -o chaos ./cmd/chaos
+FROM golang:1.16.5-alpine as build-env
+RUN GO111MODULE=on go get -v github.com/projectdiscovery/chaos-client/cmd/chaos
 
-FROM alpine
-RUN adduser --home /app --shell /bin/sh --disabled-password appuser
-COPY --from=builder --chown=appuser:appuser /app/chaos /app
-USER appuser
-
-WORKDIR /app
-ENTRYPOINT ["/app/chaos"]
-CMD ["-h"]
+FROM alpine:latest
+RUN apk add --no-cache bind-tools ca-certificates
+COPY --from=build-env /go/bin/chaos /usr/local/bin/chaos
+ENTRYPOINT ["chaos"]
