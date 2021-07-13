@@ -121,7 +121,7 @@ func (c *Client) GetSubdomains(req *SubdomainsRequest) chan *Result {
 			results <- &Result{Reader: &resp.Body}
 		default:
 			d := json.NewDecoder(resp.Body)
-			d.Token()
+			_, _ = d.Token()
 			// first 4 token should be skipped
 			skip := 0
 			for d.More() {
@@ -132,7 +132,7 @@ func (c *Client) GetSubdomains(req *SubdomainsRequest) chan *Result {
 				}
 				results <- &Result{Subdomain: fmt.Sprintf("%s", token)}
 			}
-			d.Token()
+			_, _ = d.Token()
 		}
 	}(results)
 
@@ -195,7 +195,7 @@ func (c *Client) GetBBQSubdomains(req *SubdomainsRequest) chan *BBQResult {
 			results <- &BBQResult{Reader: &resp.Body}
 		default:
 			scanner := bufio.NewScanner(resp.Body)
-			const maxCapacity = 1024*1024  
+			const maxCapacity = 1024 * 1024
 			buf := make([]byte, maxCapacity)
 			scanner.Buffer(buf, maxCapacity)
 			for scanner.Scan() {
@@ -235,8 +235,8 @@ func (c *Client) PutSubdomains(req *PutSubdomainsRequest) (*PutSubdomainsRespons
 		if err != nil {
 			return nil, errors.Wrap(err, "could not read response.")
 		}
-		return nil, fmt.Errorf("Invalid status code received: %d - %s", resp.StatusCode, string(body))
+		return nil, fmt.Errorf("invalid status code received: %d - %s", resp.StatusCode, string(body))
 	}
-	io.Copy(ioutil.Discard, resp.Body)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 	return &PutSubdomainsResponse{}, nil
 }

@@ -62,7 +62,7 @@ func processDomain(client *chaos.Client, opts *Options) {
 			break
 		}
 		if opts.JSONOutput {
-			io.Copy(opts.outputWriter, *item.Reader)
+			_, _ = io.Copy(opts.outputWriter, *item.Reader)
 		} else {
 			if item.Subdomain != "" {
 				gologger.Silent().Msgf("%s.%s\n", item.Subdomain, opts.Domain)
@@ -91,7 +91,7 @@ func processBBQDomain(client *chaos.Client, opts *Options) {
 		}
 		var bbqdata chaos.BBQData
 		if opts.JSONOutput {
-			io.Copy(opts.outputWriter, *item.Reader)
+			_, _ = io.Copy(opts.outputWriter, *item.Reader)
 		} else {
 			if err := json.Unmarshal(item.Data, &bbqdata); err != nil {
 				gologger.Error().Msgf("Could not unmarshal response: %s\n", err)
@@ -101,7 +101,7 @@ func processBBQDomain(client *chaos.Client, opts *Options) {
 			if !applyFilter(&bbqdata, opts.filter) {
 				continue
 			}
-			outputLine = fmt.Sprintf(extractOutput(&bbqdata, opts.filter))
+			outputLine = fmt.Sprint(extractOutput(&bbqdata, opts.filter))
 			if outputLine != "" {
 				_, err := fmt.Fprintf(opts.outputWriter, "%s\n", outputLine)
 				if err != nil {
