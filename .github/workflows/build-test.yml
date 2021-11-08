@@ -22,4 +22,4 @@ jobs:
 
       - name: Build
         run: go build .
-        working-directory: cmd/chaos-client/
+        working-directory: cmd/chaos/
