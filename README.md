@@ -12,7 +12,7 @@ Go client to communicate with Chaos dataset API.
 ## Installation:- 
 
 ```bash
-▶ GO111MODULE=on go get -v github.com/projectdiscovery/chaos-client/cmd/chaos
+▶ GO111MODULE=on go install -v github.com/projectdiscovery/chaos-client/cmd/chaos@latest
 ```
 
 ## Usage:- 
