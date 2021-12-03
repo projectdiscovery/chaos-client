@@ -12,13 +12,13 @@ Go client to communicate with Chaos dataset API.
 ## Installation:- 
 
 ```bash
-▶ GO111MODULE=on go get -v github.com/projectdiscovery/chaos-client/cmd/chaos
+go install -v github.com/projectdiscovery/chaos-client/cmd/chaos@latest
 ```
 
 ## Usage:- 
 
 ```bash
-▶ chaos -h
+chaos -h
 ```
 
 This will display help for the tool. Here are all the switches it supports.
@@ -59,7 +59,7 @@ As of now Chaos dataset is in beta for testing and API endpoint access available
 In order to get subdomains for a domain, use the following command.
 
 ```bash
-▶ chaos -d uber.com -silent
+chaos -d uber.com -silent
 
 restaurants.uber.com
 testcdn.uber.com
@@ -83,7 +83,7 @@ kiosk-home-staging.uber.com
 To get the number of subdomains count, you can use the `count` flag.
 
 ```bash
-▶ chaos -d uber.com -count -silent
+chaos -d uber.com -count -silent
 
 7685
 ```
