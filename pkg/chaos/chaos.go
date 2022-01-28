@@ -7,6 +7,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"strings"
 
 	jsoniter "github.com/json-iterator/go"
 	"github.com/pkg/errors"
@@ -117,22 +118,39 @@ func (c *Client) GetSubdomains(req *SubdomainsRequest) chan *Result {
 		default:
 			defer pdhttputil.DrainResponseBody(resp)
 			d := json.NewDecoder(resp.Body)
-			_, _ = d.Token()
-			// first 4 token should be skipped
-			skip := 0
+			if !checkToken(d, "{") {
+				return
+			}
+			if !checkToken(d, "domain") {
+				return
+			}
+			if !checkToken(d, req.Domain) {
+				return
+			}
+			if !checkToken(d, "subdomains") {
+				return
+			}
+			if !checkToken(d, "[") {
+				return
+			}
+
 			for d.More() {
-				token, _ := d.Token()
-				skip++
-				if skip <= 4 {
-					continue
+				// process all the tokens within the list
+				token, err := d.Token()
+				if token == nil || err != nil {
+					break
 				}
 				results <- &Result{Subdomain: fmt.Sprintf("%s", token)}
 			}
-			_, _ = d.Token()
 		}
 	}(results)
 
 	return results
+}
+
+func checkToken(d *json.Decoder, value string) bool {
+	token, err := d.Token()
+	return strings.EqualFold(fmt.Sprint(token), value) && err == nil
 }
 
 type BBQData struct {
