@@ -24,7 +24,7 @@ builds:
       goarch: 'arm64'
 
   binary: '{{ .ProjectName }}'
-  main: cmd/chaos-client/chaos.go
+  main: cmd/chaos/chaos.go
 
 archives:
 - format: zip
