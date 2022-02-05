@@ -1,4 +1,4 @@
-FROM golang:1.17.1-alpine as build-env
+FROM golang:1.17.6-alpine as build-env
 RUN GO111MODULE=on go get -v github.com/projectdiscovery/chaos-client/cmd/chaos
 
 FROM alpine:latest

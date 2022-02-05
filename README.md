@@ -1,24 +1,27 @@
-[![License](https://img.shields.io/badge/license-MIT-_red.svg)](https://opensource.org/licenses/MIT)
-[![Go Report Card](https://goreportcard.com/badge/github.com/projectdiscovery/chaos-client)](https://goreportcard.com/report/github.com/projectdiscovery/chaos-client)
-[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/projectdiscovery/chaos-client/issues)
-[![GitHub Release](https://img.shields.io/github/release/projectdiscovery/chaos-client)](https://github.com/projectdiscovery/chaos-client/releases)
-[![Follow on Twitter](https://img.shields.io/twitter/follow/pdchaos.svg?logo=twitter)](https://twitter.com/pdchaos)
-[![Chat on Discord](https://img.shields.io/discord/695645237418131507.svg?logo=discord)](https://discord.gg/KECAGdH)
+<p align="center">
+<img src="https://img.shields.io/github/go-mod/go-version/projectdiscovery/chaos-client">
+<a href="https://github.com/projectdiscovery/chaos-client/releases"><img src="https://img.shields.io/github/downloads/projectdiscovery/chaos-client/total">
+<a href="https://github.com/projectdiscovery/chaos-client/graphs/contributors"><img src="https://img.shields.io/github/contributors-anon/projectdiscovery/chaos-client">
+<a href="https://github.com/projectdiscovery/chaos-client/releases/"><img src="https://img.shields.io/github/release/projectdiscovery/chaos-client">
+<a href="https://discord.gg/projectdiscovery"><img src="https://img.shields.io/discord/695645237418131507.svg?logo=discord"></a>
+<a href="https://twitter.com/pdchaos"><img src="https://img.shields.io/twitter/follow/pdchaos.svg?logo=twitter"></a>
+</p>
 
-# Chaos
+
+# Chaos Client
 
 Go client to communicate with Chaos dataset API. 
 
-## Installation:- 
+## Installation
 
 ```bash
-▶ GO111MODULE=on go get -v github.com/projectdiscovery/chaos-client/cmd/chaos
+go install -v github.com/projectdiscovery/chaos-client/cmd/chaos@latest
 ```
 
-## Usage:- 
+## Usage
 
 ```bash
-▶ chaos -h
+chaos -h
 ```
 
 This will display help for the tool. Here are all the switches it supports.
@@ -52,14 +55,14 @@ export CHAOS_KEY=CHAOS_API_KEY
 
 ### How to avail `API_KEY`
 
-As of now Chaos dataset is in beta for testing and API endpoint access available to invited users only, you can request an invite for yourself [here](https://forms.gle/GP5nTamxJPfiMaBn9), we are sending out new invites every 2nd monday of the month, singed up and still missing the invites? feel free to shoot us a DM is our [Discord](https://discord.gg/KECAGdH) server.
+Chaos DNS API is in beta and only available to people who have been invited to use it. You can request an invite for yourself by filling [Google form](https://forms.gle/GP5nTamxJPfiMaBn9). We send out new invites every second Monday of the month. Please send us a DM on our [Discord](https://discord.gg/projectdiscovery) server.
 
-# Running chaos
+## Running chaos
 
 In order to get subdomains for a domain, use the following command.
 
 ```bash
-▶ chaos -d uber.com -silent
+chaos -d uber.com -silent
 
 restaurants.uber.com
 testcdn.uber.com
@@ -80,26 +83,18 @@ guest.uber.com
 kiosk-home-staging.uber.com
 ```
 
-To get the number of subdomains count, you can use the `count` flag.
+💡 Notes
+-----
 
-```bash
-▶ chaos -d uber.com -count -silent
-
-7685
-```
-
+- **The API is rate-limited to 1 request at a time per token.**
+- Chaos API **only** supports domain name to query.
+- Chaos recon data can be retrieved using `bbq` flag.
 
 👨‍💻 Community
 -----
 
-You are welcomed to join our [Discord Community](https://discord.gg/KECAGdH). You can also follow us on [Twitter](https://twitter.com/pdchaos) to keep up with everything related to chaos project.
+You are welcomed to join our [Discord Community](https://discord.gg/projectdiscovery). You can also follow us on [Twitter](https://twitter.com/pdchaos) to keep up with everything related to chaos project.
 
-💡 Notes
------
-
-- The API is rate-limited to 1 request at a time per token.
-- Chaos API **only** supports domain name to query.
-- Chaos recon data can be retrieved using `bbq` flag.
 
 📌 Reference
 -----
