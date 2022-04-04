@@ -48,7 +48,7 @@ snapcrafts:
     license: MIT
     base: core18
     apps:
-      chaos-client:
+      chaos:
         command: chaos
         plugs:
           - home
