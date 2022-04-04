@@ -33,3 +33,30 @@ archives:
 
 checksum:
   algorithm: sha256
+
+snapcrafts:
+  - id: chaos
+    replacements:
+      darwin: macOS
+    name: chaos
+    publish: false
+    summary: Go client to communicate with Chaos dataset API.
+    description: |
+      Go client to communicate with Chaos dataset API.
+    grade: stable
+    confinement: strict
+    license: MIT
+    base: core18
+    apps:
+      chaos-client:
+        command: chaos
+        plugs:
+          - home
+          - network
+          - removable-media
+          - dot-chaos
+    plugs:
+      dot-chaos:
+        interface: personal-files
+        write:
+          - $HOME/.config/chaos
