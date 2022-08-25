@@ -7,11 +7,11 @@ const banner = `
   _____/ /_  ____ _____  _____
  / ___/ __ \/ __  / __ \/ ___/
 / /__/ / / / /_/ / /_/ (__  ) 
-\___/_/ /_/\__,_/\____/____/  v0.2.0
+\___/_/ /_/\__,_/\____/____/  v0.3.0
 `
 
 // Version is the current version of chaos
-const Version = `0.2.0`
+const Version = `0.3.0`
 
 // showBanner is used to show the banner to the user
 func showBanner() {

@@ -1,3 +1,8 @@
+<h1 align="center">
+Chaos Client
+</h1>
+<h4 align="center">Go client to communicate with Chaos dataset API.</h4>
+
 <p align="center">
 <img src="https://img.shields.io/github/go-mod/go-version/projectdiscovery/chaos-client">
 <a href="https://github.com/projectdiscovery/chaos-client/releases"><img src="https://img.shields.io/github/downloads/projectdiscovery/chaos-client/total">
@@ -7,10 +12,6 @@
 <a href="https://twitter.com/pdchaos"><img src="https://img.shields.io/twitter/follow/pdchaos.svg?logo=twitter"></a>
 </p>
 
-
-# Chaos Client
-
-Go client to communicate with Chaos dataset API. 
 
 ## Installation
 
@@ -26,25 +27,16 @@ chaos -h
 
 This will display help for the tool. Here are all the switches it supports.
 
-| Flag                     | Description                              | Example                                                  |
-| ------------------------ | ---------------------------------------- | -------------------------------------------------------- |
-| -d                       | Domain to find subdomains for            | chaos -d uber.com                                        |
-| -count                   | Show statistics for the specified domain | chaos -d uber.com -count                                 |
-| -o                       | File to write output to (optional)       | chaos -d uber.com -o uber.txt                            |
-| -json                    | Print output as json                     | chaos -d uber.com -json                                  |
-| -key                     | Chaos key for API                        | chaos -key API_KEY                                       |
-| -dL                      | File with list of domains (optional)     | chaos -dL domains.txt                                    |
-| -dns-record-type         | Filter by dns record type                | chaos -bbq -d uber.com -dns-record-type cname            |
-| -dns-status-code         | Filter by dns status code                | chaos -bbq -d uber.com -dns-status-code noerror          |
-| -filter-wildcard         | Filter DNS wildcards                     | chaos -bbq -d uber.com -filter-wildcard                  |
-| -http-url                | Print URL of the subdomains              | chaos -bbq -d uber.com -http-url                         |
-| -http-title              | Print title of the URL                   | chaos -bbq -d uber.com -http-title                       |
-| -http-status-code        | Print http status code                   | chaos -bbq -d uber.com -http-status-code                 |
-| -http-status-code-filter | Filter http status code                  | chaos -bbq -d uber.com -http-status-code-filter 200      |
-| -resp                    | Print DNS record with response           | chaos -bbq -d uber.com -resp                             |
-| -resp-only               | Print the response of DNS record         | chaos -bbq -d uber.com -dns-record-type cname -resp-only |
-| -silent                  | Make the output silent                   | chaos -d uber.com -silent                                |
-| -version                 | Print current version of chaos client    | chaos -version                                           |
+| Flag                       | Description                              | Example                                                    |
+|----------------------------|------------------------------------------|------------------------------------------------------------|
+| `-d`                       | Domain to find subdomains for            | `chaos -d uber.com`                                        |
+| `-count`                   | Show statistics for the specified domain | `chaos -d uber.com -count`                                 |
+| `-o`                       | File to write output to (optional)       | `chaos -d uber.com -o uber.txt`                            |
+| `-json`                    | Print output as json                     | `chaos -d uber.com -json`                                  |
+| `-key`                     | Chaos key for API                        | `chaos -key API_KEY`                                       |
+| `-dL`                      | File with list of domains (optional)     | `chaos -dL domains.txt`                                    |
+| `-silent`                  | Make the output silent                   | `chaos -d uber.com -silent`                                |
+| `-version`                 | Print current version of chaos client    | `chaos -version`                                           |
 
 
 You can also set the API key as environment variable in your bash profile. 
@@ -86,20 +78,13 @@ kiosk-home-staging.uber.com
 💡 Notes
 -----
 
-- **The API is rate-limited to 1 request at a time per token.**
+- **The API is rate-limited to 60 request / min / ip**
 - Chaos API **only** supports domain name to query.
-- Chaos recon data can be retrieved using `bbq` flag.
 
 👨‍💻 Community
 -----
 
 You are welcomed to join our [Discord Community](https://discord.gg/projectdiscovery). You can also follow us on [Twitter](https://twitter.com/pdchaos) to keep up with everything related to chaos project.
-
-
-📌 Reference
------
-
-- [Introducing Chaos Recon data API](https://blog.projectdiscovery.io/introducing-chaos-bug-bounty-recon-data-api)
 
 
 Thanks again for your contribution and keeping the community vibrant. :heart:

@@ -1,5 +1,5 @@
-FROM golang:1.17.6-alpine as build-env
-RUN GO111MODULE=on go get -v github.com/projectdiscovery/chaos-client/cmd/chaos
+FROM golang:1.19.0-alpine as build-env
+RUN go install -v github.com/projectdiscovery/chaos-client/cmd/chaos@latest
 
 FROM alpine:latest
 RUN apk add --no-cache bind-tools ca-certificates
