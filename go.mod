@@ -1,6 +1,6 @@
 module github.com/projectdiscovery/chaos-client
 
-go 1.17
+go 1.18
 
 require (
 	github.com/json-iterator/go v1.1.12
