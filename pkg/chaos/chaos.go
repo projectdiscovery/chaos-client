@@ -35,10 +35,10 @@ func (c *Client) do(request *retryablehttp.Request) (*http.Response, error) {
 	if err != nil {
 		if c.ratelimit == nil {
 			rl := resp.Header.Get("X-Ratelimit-Limit")
-			rl_int, er := strconv.Atoi(rl)
+			rlMax, er := strconv.Atoi(rl)
 			if er == nil {
 				// if er then ratelimit header is not present. Hence no rate limit
-				c.ratelimit = ratelimit.New(context.Background(), int64(rl_int), time.Minute)
+				c.ratelimit = ratelimit.New(context.Background(), int64(rlMax), time.Minute)
 			}
 		}
 	}
