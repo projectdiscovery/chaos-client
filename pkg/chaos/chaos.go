@@ -2,22 +2,47 @@ package chaos
 
 import (
 	"bufio"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 	"strings"
+	"time"
 
 	jsoniter "github.com/json-iterator/go"
 	"github.com/pkg/errors"
-	pdhttputil "github.com/projectdiscovery/httputil"
+	"github.com/projectdiscovery/ratelimit"
 	"github.com/projectdiscovery/retryablehttp-go"
+	pdhttputil "github.com/projectdiscovery/utils/http"
 )
 
 // Client is a client for making requests to chaos API
 type Client struct {
 	apiKey     string
 	httpClient *retryablehttp.Client
+	ratelimit  *ratelimit.Limiter
+}
+
+// do adds apiKey and implements rate limit
+func (c *Client) do(request *retryablehttp.Request) (*http.Response, error) {
+	request.Header.Set("Authorization", c.apiKey)
+	if c.ratelimit != nil {
+		c.ratelimit.Take()
+	}
+	resp, err := c.httpClient.Do(request)
+	if err != nil {
+		if c.ratelimit == nil {
+			rl := resp.Header.Get("X-Ratelimit-Limit")
+			rl_int, er := strconv.Atoi(rl)
+			if er == nil {
+				// if er then ratelimit header is not present. Hence no rate limit
+				c.ratelimit = ratelimit.New(context.Background(), int64(rl_int), time.Minute)
+			}
+		}
+	}
+	return resp, err
 }
 
 // New creates a new client for chaos API communication
@@ -42,9 +67,8 @@ func (c *Client) GetStatistics(req *GetStatisticsRequest) (*GetStatisticsRespons
 	if err != nil {
 		return nil, errors.Wrap(err, "could not create request.")
 	}
-	request.Header.Set("Authorization", c.apiKey)
 
-	resp, err := c.httpClient.Do(request)
+	resp, err := c.do(request)
 	if err != nil {
 		return nil, errors.Wrap(err, "could not make request.")
 	}
@@ -92,9 +116,8 @@ func (c *Client) GetSubdomains(req *SubdomainsRequest) chan *Result {
 			results <- &Result{Error: errors.Wrap(err, "could not create request.")}
 			return
 		}
-		request.Header.Set("Authorization", c.apiKey)
 
-		resp, err := c.httpClient.Do(request)
+		resp, err := c.do(request)
 		if err != nil {
 			results <- &Result{Error: errors.Wrap(err, "could not make request.")}
 			return
@@ -185,9 +208,8 @@ func (c *Client) GetBBQSubdomains(req *SubdomainsRequest) chan *BBQResult {
 			results <- &BBQResult{Error: errors.Wrap(err, "could not create request.")}
 			return
 		}
-		request.Header.Set("Authorization", c.apiKey)
 
-		resp, err := c.httpClient.Do(request)
+		resp, err := c.do(request)
 		if err != nil {
 			results <- &BBQResult{Error: errors.Wrap(err, "could not make request.")}
 			return
@@ -237,9 +259,8 @@ func (c *Client) PutSubdomains(req *PutSubdomainsRequest) (*PutSubdomainsRespons
 	if err != nil {
 		return nil, errors.Wrap(err, "could not create request.")
 	}
-	request.Header.Set("Authorization", c.apiKey)
 
-	resp, err := c.httpClient.Do(request)
+	resp, err := c.do(request)
 	if err != nil {
 		return nil, errors.Wrap(err, "could not make request.")
 	}
