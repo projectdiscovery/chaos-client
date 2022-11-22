@@ -6,10 +6,11 @@ require (
 	github.com/json-iterator/go v1.1.12
 	github.com/pkg/errors v0.9.1
 	github.com/projectdiscovery/gologger v1.1.5
-	github.com/projectdiscovery/retryablehttp-go v1.0.2
+	github.com/projectdiscovery/retryablehttp-go v1.0.3
 )
 
 require (
+	github.com/Mzack9999/go-http-digest-auth-client v0.6.1-0.20220414142836-eb8883508809 // indirect
 	github.com/dsnet/compress v0.0.1 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/mholt/archiver v3.1.1+incompatible // indirect
