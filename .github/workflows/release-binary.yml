@@ -2,6 +2,8 @@ name: 🎉 Release Binary
 
 on:
   create:
+    tags:
+      - v*
   workflow_dispatch:
 
 jobs:
@@ -21,5 +23,6 @@ jobs:
           args: "release --rm-dist"
           version: latest
           workdir: .
-        env:
+        env: 
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          SLACK_WEBHOOK: "${{ secrets.RELEASE_SLACK_WEBHOOK }}"
