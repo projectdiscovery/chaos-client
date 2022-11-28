@@ -6,7 +6,7 @@ require (
 	github.com/json-iterator/go v1.1.12
 	github.com/pkg/errors v0.9.1
 	github.com/projectdiscovery/gologger v1.1.5
-	github.com/projectdiscovery/retryablehttp-go v1.0.3
+	github.com/projectdiscovery/retryablehttp-go v1.0.4
 )
 
 require (
