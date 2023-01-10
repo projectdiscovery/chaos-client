@@ -18,6 +18,7 @@ require (
 	github.com/pierrec/lz4 v2.6.0+incompatible // indirect
 	github.com/ulikunitz/xz v0.5.7 // indirect
 	github.com/xi2/xz v0.0.0-20171230120015-48954b6210f8 // indirect
+	golang.org/x/exp v0.0.0-20221217163422-3c43f8badb15 // indirect
 	gopkg.in/djherbis/times.v1 v1.3.0 // indirect
 )
 
@@ -25,7 +26,7 @@ require (
 	github.com/logrusorgru/aurora v2.0.3+incompatible // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
-	github.com/projectdiscovery/ratelimit v0.0.1
+	github.com/projectdiscovery/ratelimit v0.0.4
 	github.com/projectdiscovery/utils v0.0.4-0.20221201124851-f8524345b6d3
 	golang.org/x/net v0.5.0 // indirect
 	golang.org/x/text v0.6.0 // indirect
