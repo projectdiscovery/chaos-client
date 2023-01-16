@@ -1,4 +1,4 @@
-FROM golang:1.19.4-alpine as build-env
+FROM golang:1.19.5-alpine as build-env
 RUN go install -v github.com/projectdiscovery/chaos-client/cmd/chaos@latest
 
 FROM alpine:latest
