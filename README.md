@@ -39,7 +39,7 @@ This will display help for the tool. Here are all the switches it supports.
 | `-version`                 | Print current version of chaos client    | `chaos -version`                                           |
 
 
-You can also set the API key as environment variable in your bash profile. 
+You can also set the API key as an environment variable in your bash profile. 
 
 ```bash
 export CHAOS_KEY=CHAOS_API_KEY
@@ -47,7 +47,7 @@ export CHAOS_KEY=CHAOS_API_KEY
 
 ### How to avail `API_KEY`
 
-Chaos DNS API is in beta and only available to people who have been invited to use it. You can request an invite for yourself by filling [Google form](https://forms.gle/GP5nTamxJPfiMaBn9). We send out new invites every second Monday of the month. Please send us a DM on our [Discord](https://discord.gg/projectdiscovery) server.
+Chaos DNS API is in beta and only available to people who have been invited to use it. You can request an invite at [chaos.projectdiscovery.io](https://chaos.projectdiscovery.io).
 
 ## Running chaos
 
