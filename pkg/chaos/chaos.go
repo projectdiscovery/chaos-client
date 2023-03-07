@@ -32,14 +32,12 @@ func (c *Client) do(request *retryablehttp.Request) (*http.Response, error) {
 		c.ratelimit.Take()
 	}
 	resp, err := c.httpClient.Do(request)
-	if err != nil {
-		if c.ratelimit == nil {
-			rl := resp.Header.Get("X-Ratelimit-Limit")
-			rlMax, er := strconv.Atoi(rl)
-			if er == nil {
-				// if er then ratelimit header is not present. Hence no rate limit
-				c.ratelimit = ratelimit.New(context.Background(), int64(rlMax), time.Minute)
-			}
+	if resp != nil && c.ratelimit == nil {
+		rl := resp.Header.Get("X-Ratelimit-Limit")
+		rlMax, err := strconv.Atoi(rl)
+		if err == nil && rlMax > 0 {
+			// if er then ratelimit header is not present. Hence no rate limit
+			c.ratelimit = ratelimit.New(context.Background(), uint(rlMax), time.Minute)
 		}
 	}
 	return resp, err

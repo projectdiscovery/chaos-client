@@ -40,11 +40,11 @@ func ParseOptions() *Options {
 	opts := &Options{}
 
 	flag.StringVar(&opts.APIKey, "key", "", "Chaos key for API")
-	flag.StringVar(&opts.Domain, "d", "", "Domain contains domain to find subs for")
+	flag.StringVar(&opts.Domain, "d", "", "Domain to search for subdomains")
 	flag.BoolVar(&opts.Count, "count", false, "Show statistics for the specified domain")
 	flag.BoolVar(&opts.Silent, "silent", false, "Make the output silent")
 	flag.StringVar(&opts.Output, "o", "", "File to write output to (optional)")
-	flag.StringVar(&opts.DomainsFile, "dL", "", "File containing subdomains to query (optional)")
+	flag.StringVar(&opts.DomainsFile, "dL", "", "File containing domains to search for subdomains (optional)")
 	flag.BoolVar(&opts.JSONOutput, "json", false, "Print output as json")
 	flag.BoolVar(&opts.Version, "version", false, "Show version of chaos")
 
