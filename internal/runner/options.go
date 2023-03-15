@@ -1,12 +1,13 @@
 package runner
 
 import (
-	"flag"
 	"io"
 	"os"
 
+	"github.com/projectdiscovery/goflags"
 	"github.com/projectdiscovery/gologger"
 	"github.com/projectdiscovery/gologger/levels"
+	updateutils "github.com/projectdiscovery/utils/update"
 )
 
 // Options contains configuration options for chaos client.
@@ -33,22 +34,28 @@ type Options struct {
 	outputFile           *os.File
 	outputWriter         io.Writer
 	filter               *Filter
+	Verbose              bool
+	DisableUpdateCheck   bool
 }
 
 // ParseOptions parses the command line options for application
 func ParseOptions() *Options {
 	opts := &Options{}
+	flagSet := goflags.NewFlagSet()
+	flagSet.Marshal = true
+	flagSet.StringVar(&opts.APIKey, "key", "", "Chaos key for API")
+	flagSet.StringVar(&opts.Domain, "d", "", "Domain to search for subdomains")
+	flagSet.BoolVar(&opts.Count, "count", false, "Show statistics for the specified domain")
+	flagSet.BoolVar(&opts.Silent, "silent", false, "Make the output silent")
+	flagSet.StringVar(&opts.Output, "o", "", "File to write output to (optional)")
+	flagSet.StringVar(&opts.DomainsFile, "dL", "", "File containing domains to search for subdomains (optional)")
+	flagSet.BoolVar(&opts.JSONOutput, "json", false, "Print output as json")
+	flagSet.BoolVar(&opts.Version, "version", false, "Show version of chaos")
+	flagSet.BoolVarP(&opts.Verbose, "verbose", "v", false, "Verbose")
+	flagSet.CallbackVarP(GetUpdateCallback(), "update", "up", "update chaos to latest version")
+	flagSet.BoolVarP(&opts.DisableUpdateCheck, "disable-update-check", "duc", false, "disable automatic chaos update check")
 
-	flag.StringVar(&opts.APIKey, "key", "", "Chaos key for API")
-	flag.StringVar(&opts.Domain, "d", "", "Domain to search for subdomains")
-	flag.BoolVar(&opts.Count, "count", false, "Show statistics for the specified domain")
-	flag.BoolVar(&opts.Silent, "silent", false, "Make the output silent")
-	flag.StringVar(&opts.Output, "o", "", "File to write output to (optional)")
-	flag.StringVar(&opts.DomainsFile, "dL", "", "File containing domains to search for subdomains (optional)")
-	flag.BoolVar(&opts.JSONOutput, "json", false, "Print output as json")
-	flag.BoolVar(&opts.Version, "version", false, "Show version of chaos")
-
-	flag.Parse()
+	_ = flagSet.Parse()
 
 	if opts.Silent {
 		gologger.DefaultLogger.SetMaxLevel(levels.LevelSilent)
@@ -56,8 +63,19 @@ func ParseOptions() *Options {
 	showBanner()
 
 	if opts.Version {
-		gologger.Info().Msgf("Current Version: %s\n", Version)
+		gologger.Info().Msgf("Current Version: %s\n", version)
 		os.Exit(0)
+	}
+
+	if !opts.DisableUpdateCheck {
+		latestVersion, err := updateutils.GetVersionCheckCallback("chaos-client")()
+		if err != nil {
+			if opts.Verbose {
+				gologger.Error().Msgf("chaos version check failed: %v", err.Error())
+			}
+		} else {
+			gologger.Info().Msgf("Current chaos version %v %v", version, updateutils.GetVersionDescription(version, latestVersion))
+		}
 	}
 
 	opts.validateOptions()
