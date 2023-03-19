@@ -1,6 +1,9 @@
 package runner
 
-import "github.com/projectdiscovery/gologger"
+import (
+	"github.com/projectdiscovery/gologger"
+	updateutils "github.com/projectdiscovery/utils/update"
+)
 
 const banner = `
         __                    
@@ -10,11 +13,19 @@ const banner = `
 \___/_/ /_/\__,_/\____/____/  v0.5.0
 `
 
-// Version is the current version of chaos
-const Version = `0.5.0`
+// version is the current version of chaos
+const version = `0.5.0`
 
 // showBanner is used to show the banner to the user
 func showBanner() {
 	gologger.Print().Msgf("%s\n", banner)
 	gologger.Print().Msgf("\t\tchaos.projectdiscovery.io\n\n")
+}
+
+// GetUpdateCallback returns a callback function that updates chaos
+func GetUpdateCallback() func() {
+	return func() {
+		showBanner()
+		updateutils.GetUpdateToolCallback("chaos-client", version)()
+	}
 }
