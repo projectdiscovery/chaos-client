@@ -37,7 +37,9 @@ This will display help for the tool. Here are all the switches it supports.
 | `-dL`                      | File with list of domains (optional)     | `chaos -dL domains.txt`                                    |
 | `-silent`                  | Make the output silent                   | `chaos -d uber.com -silent`                                |
 | `-version`                 | Print current version of chaos client    | `chaos -version`                                           |
-
+| `-verbose`                 | Show verbose output                      | `chaos -verbose`                                           |
+| `-update`                  | updates to latest version                | `chaos -up`                                                | 
+| `-disable-update-check`    | disables automatic update check          | `chaos -duc`                                               |
 
 You can also set the API key as an environment variable in your bash profile. 
 
