@@ -1,7 +1,13 @@
-FROM golang:1.20.2-alpine as build-env
-RUN go install -v github.com/projectdiscovery/chaos-client/cmd/chaos@latest
+# Base
+FROM golang:1.20.1-alpine AS builder
+RUN apk add --no-cache build-base
+WORKDIR /app
+COPY . /app
+RUN go mod download
+RUN go build ./cmd/chaos
 
+# Release
 FROM alpine:latest
 RUN apk add --no-cache bind-tools ca-certificates
-COPY --from=build-env /go/bin/chaos /usr/local/bin/chaos
+COPY --from=build-env /app/chaos /usr/local/bin/
 ENTRYPOINT ["chaos"]
