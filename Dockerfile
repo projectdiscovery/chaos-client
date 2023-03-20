@@ -7,7 +7,9 @@ RUN go mod download
 RUN go build ./cmd/chaos
 
 # Release
-FROM alpine:latest
-RUN apk add --no-cache bind-tools ca-certificates
-COPY --from=build-env /app/chaos /usr/local/bin/
+FROM alpine:3.17.2
+RUN apk -U upgrade --no-cache \
+    && apk add --no-cache bind-tools ca-certificates
+COPY --from=builder /app/chaos /usr/local/bin/
+
 ENTRYPOINT ["chaos"]
