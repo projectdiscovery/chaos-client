@@ -36,6 +36,7 @@ type Options struct {
 	filter               *Filter
 	Verbose              bool
 	DisableUpdateCheck   bool
+	OnResult             func(result interface{})
 }
 
 // ParseOptions parses the command line options for application

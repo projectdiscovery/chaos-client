@@ -61,6 +61,9 @@ func processDomain(client *chaos.Client, opts *Options) {
 			gologger.Error().Msgf("Could not get subdomains for %s: %s\n", opts.Domain, item.Error)
 			break
 		}
+		if opts.OnResult != nil {
+			opts.OnResult(item)
+		}
 		if opts.JSONOutput {
 			_, _ = io.Copy(opts.outputWriter, *item.Reader)
 		} else {
@@ -88,6 +91,9 @@ func processBBQDomain(client *chaos.Client, opts *Options) {
 		if item.Error != nil {
 			gologger.Error().Msgf("Could not get subdomains: %s\n", item.Error)
 			break
+		}
+		if opts.OnResult != nil {
+			opts.OnResult(item)
 		}
 		var bbqdata chaos.BBQData
 		if opts.JSONOutput {

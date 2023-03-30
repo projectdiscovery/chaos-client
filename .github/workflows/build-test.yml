@@ -18,6 +18,13 @@ jobs:
 
       - name: Test
         run: go test ./...
+      
+      - name: Integration Tests
+        env:
+          GH_ACTION: true
+          CHAOS_KEY: "${{ secrets.CHAOS_KEY }}"
+        run: bash run.sh
+        working-directory: integration_tests/
 
       - name: Build
         run: go build .
