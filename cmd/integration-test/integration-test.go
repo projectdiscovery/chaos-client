@@ -14,7 +14,6 @@ type TestCase interface {
 }
 
 var (
-	debug      = os.Getenv("DEBUG") == "true"
 	customTest = os.Getenv("TEST")
 
 	errored = false
