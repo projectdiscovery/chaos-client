@@ -12,6 +12,10 @@ Chaos Client
 <a href="https://twitter.com/pdchaos"><img src="https://img.shields.io/twitter/follow/pdchaos.svg?logo=twitter"></a>
 </p>
 
+<p align="center">
+  <a href="https://github.com/projectdiscovery/chaos-client/blob/main/README.md">English</a> •
+  <a href="https://github.com/projectdiscovery/chaos-client/blob/main/README_CN.md">中文</a> 
+</p>
 
 ## Installation
 
