@@ -1,0 +1,6 @@
+.idea
+gcloud-key.json
+vendor
+data
+*.gen.go
+*.pb.go

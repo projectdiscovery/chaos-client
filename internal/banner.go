@@ -1,4 +1,4 @@
-package runner
+package subdomains
 
 import (
 	"github.com/projectdiscovery/gologger"
