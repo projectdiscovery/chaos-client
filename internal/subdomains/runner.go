@@ -1,22 +1,21 @@
-package runner
+package subdomains
 
 import (
 	"bufio"
-	"encoding/json"
 	"fmt"
+	"github.com/projectdiscovery/chaos-client/internal"
 	"io"
 	"os"
 
-	"github.com/projectdiscovery/chaos-client/pkg/chaos"
 	"github.com/projectdiscovery/gologger"
 )
 
 // RunEnumeration runs the enumeration for Chaos client
 func RunEnumeration(opts *Options) {
-	client := chaos.New(opts.APIKey)
-
+	httpCl := internal.NewHTTPClient(opts.APIKey)
+	client := NewClient(httpCl)
 	if opts.Count {
-		resp, err := client.GetStatistics(&chaos.GetStatisticsRequest{
+		resp, err := client.GetStatistics(&GetStatisticsRequest{
 			Domain: opts.Domain,
 		})
 		if err != nil {
@@ -39,11 +38,7 @@ func RunEnumeration(opts *Options) {
 	opts.outputWriter = io.MultiWriter(outputWriters...)
 
 	if opts.Domain != "" {
-		if opts.BBQ {
-			processBBQDomain(client, opts)
-		} else {
-			processDomain(client, opts)
-		}
+		processDomain(client, opts)
 	}
 
 	if opts.hasStdin() || opts.DomainsFile != "" {
@@ -51,8 +46,8 @@ func RunEnumeration(opts *Options) {
 	}
 }
 
-func processDomain(client *chaos.Client, opts *Options) {
-	req := &chaos.SubdomainsRequest{Domain: opts.Domain}
+func processDomain(client *Client, opts *Options) {
+	req := &SubdomainsRequest{Domain: opts.Domain}
 	if opts.JSONOutput {
 		req.OutputFormat = "json"
 	}
@@ -78,42 +73,7 @@ func processDomain(client *chaos.Client, opts *Options) {
 	}
 }
 
-func processBBQDomain(client *chaos.Client, opts *Options) {
-	req := &chaos.SubdomainsRequest{Domain: opts.Domain}
-	if opts.JSONOutput {
-		req.OutputFormat = "json"
-	}
-	var outputLine string
-	for item := range client.GetBBQSubdomains(req) {
-		if item.Error != nil {
-			gologger.Error().Msgf("Could not get subdomains: %s\n", item.Error)
-			break
-		}
-		var bbqdata chaos.BBQData
-		if opts.JSONOutput {
-			_, _ = io.Copy(opts.outputWriter, *item.Reader)
-		} else {
-			if err := json.Unmarshal(item.Data, &bbqdata); err != nil {
-				gologger.Error().Msgf("Could not unmarshal response: %s\n", err)
-				break
-			}
-			// filters
-			if !applyFilter(&bbqdata, opts.filter) {
-				continue
-			}
-			outputLine = fmt.Sprint(extractOutput(&bbqdata, opts.filter))
-			if outputLine != "" {
-				_, err := fmt.Fprintf(opts.outputWriter, "%s\n", outputLine)
-				if err != nil {
-					gologger.Error().Msgf("Could not write results to file %s for %s: %s\n", opts.Output, opts.Domain, err)
-					break
-				}
-			}
-		}
-	}
-}
-
-func processList(client *chaos.Client, opts *Options) {
+func processList(client *Client, opts *Options) {
 	var file *os.File
 	var err error
 
@@ -130,10 +90,6 @@ func processList(client *chaos.Client, opts *Options) {
 	in := bufio.NewScanner(file)
 	for in.Scan() {
 		opts.Domain = in.Text()
-		if opts.BBQ {
-			processBBQDomain(client, opts)
-		} else {
-			processDomain(client, opts)
-		}
+		processDomain(client, opts)
 	}
 }

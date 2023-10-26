@@ -3,6 +3,7 @@ module github.com/projectdiscovery/chaos-client
 go 1.18
 
 require (
+	github.com/alecthomas/kong v0.8.1
 	github.com/json-iterator/go v1.1.12
 	github.com/pkg/errors v0.9.1
 	github.com/projectdiscovery/goflags v0.1.8
