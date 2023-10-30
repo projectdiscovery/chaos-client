@@ -3,13 +3,13 @@ package subdomains
 import (
 	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
+
 	jsoniter "github.com/json-iterator/go"
-	"github.com/pkg/errors"
 	"github.com/projectdiscovery/chaos-client/internal"
 	"github.com/projectdiscovery/retryablehttp-go"
 	pdhttputil "github.com/projectdiscovery/utils/http"
-	"io"
-	"net/http"
 )
 
 // GetStatisticsRequest is the request for a domain statistics
@@ -33,20 +33,20 @@ func NewClient(cl *internal.HTTPClient) *Client {
 
 // GetStatistics returns the statistics for a given domain.
 func (c *Client) GetStatistics(req *GetStatisticsRequest) (*GetStatisticsResponse, error) {
-	request, err := retryablehttp.NewRequest(http.MethodGet, fmt.Sprintf("https://api.chaosdb.sh/dns/%s", req.Domain), nil)
+	request, err := retryablehttp.NewRequest(http.MethodGet, fmt.Sprintf("https://%s/dns/%s", internal.APIDomain, req.Domain), nil)
 	if err != nil {
-		return nil, errors.Wrap(err, "could not create request.")
+		return nil, fmt.Errorf("could not create request: %w", err)
 	}
 
 	resp, err := c.cl.Do(request)
 	if err != nil {
-		return nil, errors.Wrap(err, "could not make request.")
+		return nil, fmt.Errorf("could not make request: %w", err)
 	}
 
 	if resp.StatusCode != http.StatusOK {
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
-			return nil, errors.Wrap(err, "could not read response.")
+			return nil, fmt.Errorf("could not read response: %w", err)
 		}
 		return nil, internal.InvalidStatusCodeError{StatusCode: resp.StatusCode, Message: body}
 	}
@@ -56,57 +56,57 @@ func (c *Client) GetStatistics(req *GetStatisticsRequest) (*GetStatisticsRespons
 	response := GetStatisticsResponse{}
 	err = jsoniter.NewDecoder(resp.Body).Decode(&response)
 	if err != nil {
-		return nil, errors.Wrap(err, "could not unmarshal results.")
+		return nil, fmt.Errorf("could not unmarshal results: %w", err)
 	}
 
 	return &response, nil
 }
 
-// SubdomainsRequest is the request for a host subdomains.
-type SubdomainsRequest struct {
+// Request is the request for a host subdomains.
+type Request struct {
 	Domain       string
 	OutputFormat string
 }
 
-// Result is the response for a host subdomains.
-type Result struct {
+// Response is the response for a host subdomains.
+type Response struct {
 	Subdomain string
 	Reader    *io.ReadCloser
 	Error     error
 }
 
 // GetSubdomains returns the subdomains for a given domain.
-func (c *Client) GetSubdomains(req *SubdomainsRequest) chan *Result {
-	results := make(chan *Result)
-	go func(results chan *Result) {
+func (c *Client) GetSubdomains(req *Request) chan *Response {
+	results := make(chan *Response)
+	go func(results chan *Response) {
 		defer close(results)
 
-		request, err := retryablehttp.NewRequest(http.MethodGet, fmt.Sprintf("https://api.chaosdb.sh/dns/%s/subdomains", req.Domain), nil)
+		request, err := retryablehttp.NewRequest(http.MethodGet, fmt.Sprintf("https://%s/dns/%s/subdomains", internal.APIDomain, req.Domain), nil)
 		if err != nil {
-			results <- &Result{Error: errors.Wrap(err, "could not create request.")}
+			results <- &Response{Error: fmt.Errorf("could not create request: %w", err)}
 			return
 		}
 
 		resp, err := c.cl.Do(request)
 		if err != nil {
-			results <- &Result{Error: errors.Wrap(err, "could not make request.")}
+			results <- &Response{Error: fmt.Errorf("could not make request: %w", err)}
 			return
 		}
 
 		if resp.StatusCode != http.StatusOK {
 			body, err := io.ReadAll(resp.Body)
 			if err != nil {
-				results <- &Result{Error: errors.Wrap(err, "could not read response.")}
+				results <- &Response{Error: fmt.Errorf("could not read response: %w", err)}
 				return
 			}
 			pdhttputil.DrainResponseBody(resp)
-			results <- &Result{Error: internal.InvalidStatusCodeError{StatusCode: resp.StatusCode, Message: body}}
+			results <- &Response{Error: internal.InvalidStatusCodeError{StatusCode: resp.StatusCode, Message: body}}
 			return
 		}
 
 		switch req.OutputFormat {
 		case "json":
-			results <- &Result{Reader: &resp.Body}
+			results <- &Response{Reader: &resp.Body}
 		default:
 			defer pdhttputil.DrainResponseBody(resp)
 			d := json.NewDecoder(resp.Body)
@@ -132,7 +132,7 @@ func (c *Client) GetSubdomains(req *SubdomainsRequest) chan *Result {
 				if token == nil || err != nil {
 					break
 				}
-				results <- &Result{Subdomain: fmt.Sprintf("%s", token)}
+				results <- &Response{Subdomain: fmt.Sprintf("%s", token)}
 			}
 		}
 	}(results)

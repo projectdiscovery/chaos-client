@@ -68,7 +68,7 @@ func main() {
 
 	switch ctx.Command() {
 	case "subdomains <domain>":
-		opts := subdomains.Options{
+		opts := &subdomains.Options{
 			APIKey:     cli.Key,
 			Count:      cli.Subdomains.Count,
 			Silent:     cli.Silent,
@@ -81,12 +81,12 @@ func main() {
 		if err != nil {
 			gologger.Fatal().Msg(err.Error())
 		}
-		err = subdomains.Run(&opts)
+		err = subdomains.Run(opts)
 		if err != nil {
 			gologger.Fatal().Msg(err.Error())
 		}
 	case "subdomains-batch <file>":
-		opts := subdomains.Options{
+		opts := &subdomains.Options{
 			APIKey:      cli.Key,
 			DomainsFile: cli.SubdomainsBatch.File,
 			Silent:      cli.Silent,
@@ -99,7 +99,7 @@ func main() {
 		if err != nil {
 			gologger.Fatal().Msg(err.Error())
 		}
-		err = subdomains.Run(&opts)
+		err = subdomains.Run(opts)
 		if err != nil {
 			gologger.Fatal().Msg(err.Error())
 		}

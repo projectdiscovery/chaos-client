@@ -1,10 +1,9 @@
 package subdomains
 
 import (
+	"fmt"
 	"io"
 	"os"
-
-	"github.com/projectdiscovery/gologger"
 )
 
 // Options contains configuration options for chaos client.
@@ -23,19 +22,22 @@ type Options struct {
 	DisableUpdateCheck bool
 }
 
-func (opts *Options) ValidateOptions() {
+// ValidateOptions validates the options
+func (opts *Options) ValidateOptions() error {
 	// If empty try to retrieve the key from env variables
 	if opts.APIKey == "" {
 		opts.APIKey = os.Getenv("CHAOS_KEY")
 	}
 
 	if opts.APIKey == "" {
-		gologger.Fatal().Msgf("Authorization token not specified\n")
+		return fmt.Errorf("Authorization token not specified")
 	}
 
 	if opts.Domain == "" && opts.DomainsFile == "" && !opts.hasStdin() {
-		gologger.Fatal().Msgf("No input specified for the API\n")
+		return fmt.Errorf("No input specified for the API")
 	}
+
+	return nil
 }
 
 func (opts *Options) hasStdin() bool {

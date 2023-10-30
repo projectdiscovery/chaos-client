@@ -4,13 +4,16 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/projectdiscovery/ratelimit"
-	"github.com/projectdiscovery/retryablehttp-go"
 	"net/http"
 	"strconv"
 	"strings"
-	time "time"
+	"time"
+
+	"github.com/projectdiscovery/ratelimit"
+	"github.com/projectdiscovery/retryablehttp-go"
 )
+
+const APIDomain = "api.chaosdb.sh"
 
 // HTTPClient is a client for making requests to chaos API
 type HTTPClient struct {
