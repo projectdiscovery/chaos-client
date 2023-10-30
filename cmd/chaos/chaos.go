@@ -13,7 +13,6 @@ import (
 
 var cli struct {
 	Key                string `help:"Chaos key for API" short:"k"`
-	Domain             string `help:"Domain to search for subdomains" short:"d"`
 	Silent             bool   `help:"Make the output silent"`
 	Output             string `help:"File to write output to (optional)" short:"o"`
 	Version            bool   `help:"Show version of chaos"`
@@ -21,7 +20,7 @@ var cli struct {
 	Update             bool   `help:"update Chaos to latest version" aliases:"up"`
 	DisableUpdateCheck bool   `help:"disable automatic Chaos update check" aliases:"duc"`
 	Subdomains         struct {
-		Domain string `arg:"" help:"Domain."`
+		Domain string `arg:"" help:"Domain to search for subdomains"`
 		Count  bool   `help:"Show statistics for the specified domain"`
 		DL     string `help:"File containing domains to search for subdomains (optional)" aliases:"dL"`
 		JSON   bool   `help:"Print output as json"`
