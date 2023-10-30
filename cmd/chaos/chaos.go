@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/alecthomas/kong"
@@ -35,7 +36,10 @@ var cli struct {
 	} `cmd:"" help:"Get DNS record"`
 }
 
-func main() {
+func Run(url *string) error {
+	if url != nil {
+		internal.APIAddress = *url
+	}
 	ctx := kong.Parse(&cli,
 		kong.Name("chaos"),
 		kong.Description("Chaos client"),
@@ -52,7 +56,7 @@ func main() {
 
 	if cli.Version {
 		gologger.Info().Msgf("Current Version: %s\n", internal.Version)
-		os.Exit(0)
+		return nil
 	}
 
 	if !cli.DisableUpdateCheck {
@@ -70,6 +74,7 @@ func main() {
 	case "subdomains <domain>":
 		opts := &subdomains.Options{
 			APIKey:     cli.Key,
+			Domain:     cli.Subdomains.Domain,
 			Count:      cli.Subdomains.Count,
 			Silent:     cli.Silent,
 			Output:     cli.Output,
@@ -79,11 +84,11 @@ func main() {
 		}
 		err := opts.ValidateOptions()
 		if err != nil {
-			gologger.Fatal().Msg(err.Error())
+			return err
 		}
 		err = subdomains.Run(opts)
 		if err != nil {
-			gologger.Fatal().Msg(err.Error())
+			return err
 		}
 	case "subdomains-batch <file>":
 		opts := &subdomains.Options{
@@ -97,11 +102,11 @@ func main() {
 		}
 		err := opts.ValidateOptions()
 		if err != nil {
-			gologger.Fatal().Msg(err.Error())
+			return err
 		}
 		err = subdomains.Run(opts)
 		if err != nil {
-			gologger.Fatal().Msg(err.Error())
+			return err
 		}
 	case "dns <domain>":
 		opts := dns.Options{
@@ -111,14 +116,24 @@ func main() {
 		}
 		err := opts.ValidateOptions()
 		if err != nil {
-			gologger.Fatal().Msg(err.Error())
+			return err
 		}
 
 		err = dns.Run(&opts)
 		if err != nil {
-			gologger.Fatal().Msg(err.Error())
+			return err
 		}
 	default:
-		gologger.Fatal().Msgf("unexpected command: %s", ctx.Command())
+		return fmt.Errorf("unexpected command: %s", ctx.Command())
 	}
+
+	return nil
+}
+
+func main() {
+	if err := Run(nil); err != nil {
+		gologger.Fatal().Msg(err.Error())
+	}
+
+	os.Exit(0)
 }

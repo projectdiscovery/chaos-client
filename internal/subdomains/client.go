@@ -33,7 +33,7 @@ func NewClient(cl *internal.HTTPClient) *Client {
 
 // GetStatistics returns the statistics for a given domain.
 func (c *Client) GetStatistics(req *GetStatisticsRequest) (*GetStatisticsResponse, error) {
-	request, err := retryablehttp.NewRequest(http.MethodGet, fmt.Sprintf("https://%s/dns/%s", internal.APIDomain, req.Domain), nil)
+	request, err := retryablehttp.NewRequest(http.MethodGet, fmt.Sprintf("%s/dns/%s", internal.APIAddress, req.Domain), nil)
 	if err != nil {
 		return nil, fmt.Errorf("could not create request: %w", err)
 	}
@@ -48,7 +48,7 @@ func (c *Client) GetStatistics(req *GetStatisticsRequest) (*GetStatisticsRespons
 		if err != nil {
 			return nil, fmt.Errorf("could not read response: %w", err)
 		}
-		return nil, internal.InvalidStatusCodeError{StatusCode: resp.StatusCode, Message: body}
+		return nil, internal.InvalidStatusCodeError{StatusCode: resp.StatusCode, Err: string(body)}
 	}
 
 	defer pdhttputil.DrainResponseBody(resp)
@@ -81,7 +81,7 @@ func (c *Client) GetSubdomains(req *Request) chan *Response {
 	go func(results chan *Response) {
 		defer close(results)
 
-		request, err := retryablehttp.NewRequest(http.MethodGet, fmt.Sprintf("https://%s/dns/%s/subdomains", internal.APIDomain, req.Domain), nil)
+		request, err := retryablehttp.NewRequest(http.MethodGet, fmt.Sprintf("%s/dns/%s/subdomains", internal.APIAddress, req.Domain), nil)
 		if err != nil {
 			results <- &Response{Error: fmt.Errorf("could not create request: %w", err)}
 			return
@@ -100,7 +100,7 @@ func (c *Client) GetSubdomains(req *Request) chan *Response {
 				return
 			}
 			pdhttputil.DrainResponseBody(resp)
-			results <- &Response{Error: internal.InvalidStatusCodeError{StatusCode: resp.StatusCode, Message: body}}
+			results <- &Response{Error: internal.InvalidStatusCodeError{StatusCode: resp.StatusCode, Err: string(body)}}
 			return
 		}
 

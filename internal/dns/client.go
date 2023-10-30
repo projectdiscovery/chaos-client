@@ -38,13 +38,16 @@ type LookupResponse struct {
 
 // Lookup requests a domain resolution
 func (c *Client) Lookup(domain string, types []RecordType) (*LookupResponse, error) {
-	request, err := retryablehttp.NewRequest(http.MethodGet, fmt.Sprintf("https://%s/dnsx/%s", internal.APIDomain, domain), nil)
+	request, err := retryablehttp.NewRequest(http.MethodGet, fmt.Sprintf("%s/dnsx/%s", internal.APIAddress, domain), nil)
 	if err != nil {
 		return nil, fmt.Errorf("could not create request: %w", err)
 	}
 	resp, err := c.cl.Do(request)
-	if resp.StatusCode != http.StatusOK {
+	if err != nil {
 		return nil, fmt.Errorf("could not make request: %w", err)
+	}
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("could not make request: wrong status %d", resp.StatusCode)
 	}
 
 	d := json.NewDecoder(resp.Body)

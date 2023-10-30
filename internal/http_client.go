@@ -13,7 +13,7 @@ import (
 	"github.com/projectdiscovery/retryablehttp-go"
 )
 
-const APIDomain = "api.chaosdb.sh"
+var APIAddress = "https://api.chaosdb.sh"
 
 // HTTPClient is a client for making requests to chaos API
 type HTTPClient struct {
@@ -48,11 +48,11 @@ func (c *HTTPClient) Do(request *retryablehttp.Request) (*http.Response, error) 
 
 type InvalidStatusCodeError struct {
 	StatusCode int
-	Message    []byte
+	Err        string `json:"error"`
 }
 
 func (e InvalidStatusCodeError) Error() string {
-	return fmt.Sprintf("invalid status code received: %d - %s", e.StatusCode, e.Message)
+	return fmt.Sprintf("invalid status code received: %d - %s", e.StatusCode, e.Err)
 }
 
 func CheckToken(d *json.Decoder, value string) bool {

@@ -2,6 +2,7 @@ package dns
 
 import (
 	"errors"
+	"fmt"
 	"os"
 )
 
@@ -33,6 +34,10 @@ func (opts *Options) ValidateOptions() error {
 
 	if opts.APIKey == "" {
 		return errors.New("Authorization token not specified")
+	}
+
+	if opts.Domain == "" {
+		return fmt.Errorf("No input specified for the API")
 	}
 
 	return nil
