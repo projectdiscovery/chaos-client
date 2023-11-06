@@ -1,0 +1,39 @@
+run:
+  timeout: 20m
+  tests: true
+  skip-dirs-use-default: true
+
+linters:
+  disable-all: true
+  enable:
+    - goconst
+    - revive
+    - goimports
+    - gosimple
+    - govet
+    - ineffassign
+    - misspell
+    - unconvert
+    - typecheck
+    - unused
+    - staticcheck
+    - bidichk
+    - durationcheck
+    - exportloopref
+    - whitespace
+
+    # - structcheck # lots of false positives
+    # - errcheck #lot of false positives
+    # - contextcheck
+    # - errchkjson # lots of false positives
+    # - errorlint # this check crashes
+    # - exhaustive # silly check
+    # - makezero # false positives
+    # - nilerr # several intentional
+
+linters-settings:
+  gofmt:
+    simplify: true
+  goconst:
+    min-len: 3 # minimum length of string constant
+    min-occurrences: 6 # minimum number of occurrences

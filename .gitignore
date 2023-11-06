@@ -1,0 +1,5 @@
+.idea
+vendor
+data
+*.gen.go
+*.pb.go
