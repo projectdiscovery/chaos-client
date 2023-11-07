@@ -12,13 +12,14 @@ Chaos Client
 <a href="https://twitter.com/pdchaos"><img src="https://img.shields.io/twitter/follow/pdchaos.svg?logo=twitter"></a>
 </p>
 
+
 ## Installation
 
 ```bash
 go install -v github.com/projectdiscovery/chaos-client/cmd/chaos@latest
 ```
 
-## General usage
+## Usage
 
 ```bash
 chaos -h
@@ -26,40 +27,36 @@ chaos -h
 
 This will display help for the tool. Here are all the switches it supports.
 
+| Flag                       | Description                              | Example                                                    |
+|----------------------------|------------------------------------------|------------------------------------------------------------|
+| `-d`                       | Domain to find subdomains for            | `chaos -d uber.com`                                        |
+| `-count`                   | Show statistics for the specified domain | `chaos -d uber.com -count`                                 |
+| `-o`                       | File to write output to (optional)       | `chaos -d uber.com -o uber.txt`                            |
+| `-json`                    | Print output as json                     | `chaos -d uber.com -json`                                  |
+| `-key`                     | Chaos key for API                        | `chaos -key API_KEY`                                       |
+| `-dL`                      | File with list of domains (optional)     | `chaos -dL domains.txt`                                    |
+| `-silent`                  | Make the output silent                   | `chaos -d uber.com -silent`                                |
+| `-version`                 | Print current version of chaos client    | `chaos -version`                                           |
+| `-verbose`                 | Show verbose output                      | `chaos -verbose`                                           |
+| `-update`                  | updates to latest version                | `chaos -up`                                                | 
+| `-disable-update-check`    | disables automatic update check          | `chaos -duc`                                               |
+
+You can also set the API key as an environment variable in your bash profile. 
+
 ```bash
-chaos <command>
+export CHAOS_KEY=CHAOS_API_KEY
 ```
 
-| Flag                     | Description                           | Example                        |
-|--------------------------|---------------------------------------|--------------------------------|
-| `-h`,`--help`            | Show help                             | `chaos -h`                     |
-| `--key`                  | Chaos key for API                     | `chaos <command> -key API_KEY` |
-| `--silent`               | Make the output silent                | `chaos <command> -silent`      |
-| `-o`,`--output`          | File to write output to (optional)    | `chaos <command> -o uber.txt`  |
-| `-version`               | Print current version of chaos client | `chaos -version`               |
-| `-v`,`--verbose`         | Show verbose output                   | `chaos -verbose`               |
-| `--update`               | updates to latest version             | `chaos -up`                    | 
-| `--disable-update-check` | disables automatic update check       | `chaos -duc`                   |
+### How to avail `API_KEY`
 
-### Subdomains
+Chaos DNS API is in beta and only available to people who have been invited to use it. You can request an invite at [chaos.projectdiscovery.io](https://chaos.projectdiscovery.io).
 
-Get subdomains for a domain.
+## Running chaos
+
+In order to get subdomains for a domain, use the following command.
 
 ```bash
-chaos subdomains <domain>
-```
-
-Take a domain name and return subdomains for it.
-
-| Flag      | Description                              | Example                               |
-|-----------|------------------------------------------|---------------------------------------|
-| `--count` | Show statistics for the specified domain | `chaos subdomains google.com --count` |
-| `--json`  | Print output as json                     | `chaos subdomains google.com --json`  |
-
-Example:
-
-```bash
-chaos subdomains uber.com -silent
+chaos -d uber.com -silent
 
 restaurants.uber.com
 testcdn.uber.com
@@ -80,62 +77,6 @@ guest.uber.com
 kiosk-home-staging.uber.com
 ```
 
-### Batch subdomains
-
-Get subdomains from list of domains.
-
-```bash
-chaos subdomains-batch <path-to-files>
-```
-
-| Flag     | Description          | Example                                  |
-|----------|----------------------|------------------------------------------|
-| `--json` | Print output as json | `chaos subdomains-batch subs.txt --json` |
-
-Take domains from a file and return subdomains for each domain.
-
-### DNS Records
-
-Lookup DNS records for a domain.
-
-```bash
-chaos dns <domain>
-```
-
-| Flag                      | Description                                             | Example                             |
-|---------------------------|---------------------------------------------------------|-------------------------------------|
-| `-t`, `--types=TYPES,...` | DNS record type(s) (a,aaaa,caa,cname,mx,ns,soa,srv,txt) | `chaos dns hackerone.com -t a,aaaa` |
-
-Example:
-
-```bash
-chaos dns uber.com -t a,soa | jq
-
-{
-  "a": [
-    "34.98.127.226"
-  ],
-  "soa": [
-    "edns126.ultradns.com",
-    "edns126.ultradns.com",
-    "edns126.ultradns.com",
-    "edns126.ultradns.com",
-    "edns126.ultradns.com"
-  ]
-}
-```
-
-### How to avail `API_KEY`
-
-Chaos DNS API is in beta and only available to people who have been invited to use it. You can request an invite
-at [chaos.projectdiscovery.io](https://chaos.projectdiscovery.io).
-
-You can also set the API key as an environment variable in your bash profile.
-
-```bash
-export CHAOS_KEY=CHAOS_API_KEY
-```
-
 💡 Notes
 -----
 
@@ -145,7 +86,7 @@ export CHAOS_KEY=CHAOS_API_KEY
 👨‍💻 Community
 -----
 
-You are welcomed to join our [Discord Community](https://discord.gg/projectdiscovery). You can also follow us
-on [Twitter](https://twitter.com/pdchaos) to keep up with everything related to chaos project.
+You are welcomed to join our [Discord Community](https://discord.gg/projectdiscovery). You can also follow us on [Twitter](https://twitter.com/pdchaos) to keep up with everything related to chaos project.
+
 
 Thanks again for your contribution and keeping the community vibrant. :heart:
