@@ -4,6 +4,7 @@ import (
 	"io"
 	"os"
 
+	"github.com/projectdiscovery/chaos-client/pkg/chaos"
 	"github.com/projectdiscovery/goflags"
 	"github.com/projectdiscovery/gologger"
 	"github.com/projectdiscovery/gologger/levels"
@@ -64,20 +65,23 @@ func ParseOptions() *Options {
 	showBanner()
 
 	if opts.Version {
-		gologger.Info().Msgf("Current Version: %s\n", version)
+		gologger.Info().Msgf("Current Version: %s\n", chaos.Version)
 		os.Exit(0)
 	}
 
 	if !opts.DisableUpdateCheck {
-		latestVersion, err := updateutils.GetVersionCheckCallback("chaos-client")()
+		latestVersion, err := updateutils.GetToolVersionCallback("chaos-client", chaos.Version)()
 		if err != nil {
 			if opts.Verbose {
 				gologger.Error().Msgf("chaos version check failed: %v", err.Error())
 			}
 		} else {
-			gologger.Info().Msgf("Current chaos version %v %v", version, updateutils.GetVersionDescription(version, latestVersion))
+			gologger.Info().Msgf("Current chaos version %v %v", chaos.Version, updateutils.GetVersionDescription(chaos.Version, latestVersion))
 		}
 	}
+
+	// is this sdk
+	chaos.IsSDK = false
 
 	opts.validateOptions()
 
