@@ -2,7 +2,6 @@ module github.com/projectdiscovery/chaos-client
 
 go 1.21
 
-
 require (
 	github.com/json-iterator/go v1.1.12
 	github.com/pkg/errors v0.9.1
@@ -99,6 +98,7 @@ require (
 	golang.org/x/oauth2 v0.11.0 // indirect
 	golang.org/x/sync v0.6.0 // indirect
 	golang.org/x/sys v0.17.0 // indirect
+	golang.org/x/term v0.16.0 // indirect
 	golang.org/x/tools v0.13.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.33.0 // indirect

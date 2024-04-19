@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/logrusorgru/aurora"
+	pdcp "github.com/projectdiscovery/utils/auth/pdcp"
 )
 
 type TestCase interface {
@@ -26,6 +27,14 @@ var (
 )
 
 func main() {
+	// skip if creds are not given
+	creds := pdcp.PDCPCredHandler{}
+	got, err := creds.GetCreds()
+	if err != nil || got == nil || got.APIKey == "" {
+		fmt.Printf("Skipping integration tests as creds are not provided: %s\n", err)
+		os.Exit(0)
+	}
+
 	for name, tests := range tests {
 		fmt.Printf("Running test cases for \"%s\"\n", aurora.Blue(name))
 		if customTest != "" && !strings.Contains(name, customTest) {
