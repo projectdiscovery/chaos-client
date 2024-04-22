@@ -31,27 +31,27 @@ chaos -h
 
 This will display help for the tool. Here are all the switches it supports.
 
-| Flag                       | Description                              | Example                                                    |
-|----------------------------|------------------------------------------|------------------------------------------------------------|
-| `-d`                       | Domain to find subdomains for            | `chaos -d uber.com`                                        |
-| `-count`                   | Show statistics for the specified domain | `chaos -d uber.com -count`                                 |
-| `-o`                       | File to write output to (optional)       | `chaos -d uber.com -o uber.txt`                            |
-| `-json`                    | Print output as json                     | `chaos -d uber.com -json`                                  |
-| `-key`                     | Chaos key for API                        | `chaos -key API_KEY`                                       |
-| `-dL`                      | File with list of domains (optional)     | `chaos -dL domains.txt`                                    |
-| `-silent`                  | Make the output silent                   | `chaos -d uber.com -silent`                                |
-| `-version`                 | Print current version of chaos client    | `chaos -version`                                           |
-| `-verbose`                 | Show verbose output                      | `chaos -verbose`                                           |
-| `-update`                  | updates to latest version                | `chaos -up`                                                | 
-| `-disable-update-check`    | disables automatic update check          | `chaos -duc`                                               |
+```console
+   -key string                  projectdiscovery cloud (pdcp) api key
+   -d string                    domain to search for subdomains
+   -count                       show statistics for the specified domain
+   -silent                      make the output silent
+   -o string                    file to write output to (optional)
+   -dL string                   file containing domains to search for subdomains (optional)
+   -json                        print output as json
+   -version                     show version of chaos
+   -v, -verbose                 verbose mode
+   -up, -update                 update chaos to latest version
+   -duc, -disable-update-check  disable automatic chaos update check
+```
 
 You can also set the API key as an environment variable in your bash profile. 
 
 ```bash
-export CHAOS_KEY=CHAOS_API_KEY
+export PDCP_API_KEY=xxxxx
 ```
 
-### How to avail `API_KEY`
+### How to avail `PDCP_API_KEY`
 
 You can get your API key by either signing up or logging in at [cloud.projectdiscovery.io](https://cloud.projectdiscovery.io?ref=api_key).
 
@@ -104,7 +104,7 @@ func main() {
 	var results []chaos.Result
 	opts := &runner.Options{
 		Domain: "projectdiscovery.io",
-		APIKey: os.Getenv("CHAOS_KEY"),
+		APIKey: os.Getenv("PDCP_API_KEY"),
 		OnResult: func(result interface{}) {
 			if val, ok := result.(chaos.Result); !ok {
 				results = append(results, val)
@@ -118,7 +118,7 @@ func main() {
 ```
 💡 Note
 
-To run the program, you need to set the `CHAOS_KEY` environment variable to your Chaos API key.
+To run the program, you need to set the `PDCP_API_KEY` environment variable to your Chaos API key.
 
 👨‍💻 Community
 -----
