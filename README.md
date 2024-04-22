@@ -53,7 +53,7 @@ export CHAOS_KEY=CHAOS_API_KEY
 
 ### How to avail `API_KEY`
 
-Chaos DNS API is in beta and only available to people who have been invited to use it. You can request an invite at [chaos.projectdiscovery.io](https://chaos.projectdiscovery.io).
+You can get your API key by either signing up or logging in at [cloud.projectdiscovery.io](https://cloud.projectdiscovery.io?ref=api_key).
 
 ## Running chaos
 
