@@ -16,6 +16,17 @@ import (
 	"github.com/projectdiscovery/ratelimit"
 	"github.com/projectdiscovery/retryablehttp-go"
 	pdhttputil "github.com/projectdiscovery/utils/http"
+	updateutils "github.com/projectdiscovery/utils/update"
+	urlutil "github.com/projectdiscovery/utils/url"
+)
+
+const (
+	// Version is the current Version of chaos
+	Version = `0.5.1`
+)
+
+var (
+	IsSDK = true
 )
 
 // Client is a client for making requests to chaos API
@@ -31,6 +42,16 @@ func (c *Client) do(request *retryablehttp.Request) (*http.Response, error) {
 	if c.ratelimit != nil {
 		c.ratelimit.Take()
 	}
+	// add pdtm required metadata
+	if request.URL.Params == nil {
+		request.URL.Params = urlutil.NewOrderedParams()
+	}
+	request.URL.Params.Merge(updateutils.GetpdtmParams(Version))
+	if IsSDK {
+		request.URL.Params.Add("sdk", "true")
+	}
+	request.URL.Update()
+
 	resp, err := c.httpClient.Do(request)
 	if resp != nil && c.ratelimit == nil {
 		rl := resp.Header.Get("X-Ratelimit-Limit")
