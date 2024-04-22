@@ -12,6 +12,10 @@ Chaos Client
 <a href="https://twitter.com/pdchaos"><img src="https://img.shields.io/twitter/follow/pdchaos.svg?logo=twitter"></a>
 </p>
 
+<p align="center">
+  <a href="https://github.com/projectdiscovery/chaos-client/blob/main/README.md">English</a> •
+  <a href="https://github.com/projectdiscovery/chaos-client/blob/main/README_CN.md">中文</a> 
+</p>
 
 ## Installation
 
@@ -41,7 +45,7 @@ This will display help for the tool. Here are all the switches it supports.
 | `-update`                  | updates to latest version                | `chaos -up`                                                | 
 | `-disable-update-check`    | disables automatic update check          | `chaos -duc`                                               |
 
-You can also set the API key as environment variable in your bash profile. 
+You can also set the API key as an environment variable in your bash profile. 
 
 ```bash
 export CHAOS_KEY=CHAOS_API_KEY
@@ -49,7 +53,7 @@ export CHAOS_KEY=CHAOS_API_KEY
 
 ### How to avail `API_KEY`
 
-Chaos DNS API is in beta and only available to people who have been invited to use it. You can request an invite for yourself by filling [Google form](https://forms.gle/GP5nTamxJPfiMaBn9). We send out new invites every second Monday of the month. Please send us a DM on our [Discord](https://discord.gg/projectdiscovery) server.
+Chaos DNS API is in beta and only available to people who have been invited to use it. You can request an invite at [chaos.projectdiscovery.io](https://chaos.projectdiscovery.io).
 
 ## Running chaos
 
