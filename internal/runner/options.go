@@ -4,6 +4,7 @@ import (
 	"io"
 	"os"
 
+	"github.com/projectdiscovery/chaos-client/pkg/chaos"
 	"github.com/projectdiscovery/goflags"
 	"github.com/projectdiscovery/gologger"
 	"github.com/projectdiscovery/gologger/levels"
@@ -36,6 +37,7 @@ type Options struct {
 	filter               *Filter
 	Verbose              bool
 	DisableUpdateCheck   bool
+	OnResult             func(result interface{})
 }
 
 // ParseOptions parses the command line options for application
@@ -43,15 +45,15 @@ func ParseOptions() *Options {
 	opts := &Options{}
 	flagSet := goflags.NewFlagSet()
 	flagSet.Marshal = true
-	flagSet.StringVar(&opts.APIKey, "key", "", "Chaos key for API")
-	flagSet.StringVar(&opts.Domain, "d", "", "Domain to search for subdomains")
-	flagSet.BoolVar(&opts.Count, "count", false, "Show statistics for the specified domain")
-	flagSet.BoolVar(&opts.Silent, "silent", false, "Make the output silent")
-	flagSet.StringVar(&opts.Output, "o", "", "File to write output to (optional)")
-	flagSet.StringVar(&opts.DomainsFile, "dL", "", "File containing domains to search for subdomains (optional)")
-	flagSet.BoolVar(&opts.JSONOutput, "json", false, "Print output as json")
-	flagSet.BoolVar(&opts.Version, "version", false, "Show version of chaos")
-	flagSet.BoolVarP(&opts.Verbose, "verbose", "v", false, "Verbose")
+	flagSet.StringVar(&opts.APIKey, "key", "", "projectdiscovery cloud (pdcp) api key")
+	flagSet.StringVar(&opts.Domain, "d", "", "domain to search for subdomains")
+	flagSet.BoolVar(&opts.Count, "count", false, "show statistics for the specified domain")
+	flagSet.BoolVar(&opts.Silent, "silent", false, "make the output silent")
+	flagSet.StringVar(&opts.Output, "o", "", "file to write output to (optional)")
+	flagSet.StringVar(&opts.DomainsFile, "dL", "", "file containing domains to search for subdomains (optional)")
+	flagSet.BoolVar(&opts.JSONOutput, "json", false, "print output as json")
+	flagSet.BoolVar(&opts.Version, "version", false, "show version of chaos")
+	flagSet.BoolVarP(&opts.Verbose, "verbose", "v", false, "verbose mode")
 	flagSet.CallbackVarP(GetUpdateCallback(), "update", "up", "update chaos to latest version")
 	flagSet.BoolVarP(&opts.DisableUpdateCheck, "disable-update-check", "duc", false, "disable automatic chaos update check")
 
@@ -63,20 +65,23 @@ func ParseOptions() *Options {
 	showBanner()
 
 	if opts.Version {
-		gologger.Info().Msgf("Current Version: %s\n", version)
+		gologger.Info().Msgf("Current Version: %s\n", chaos.Version)
 		os.Exit(0)
 	}
 
 	if !opts.DisableUpdateCheck {
-		latestVersion, err := updateutils.GetVersionCheckCallback("chaos-client")()
+		latestVersion, err := updateutils.GetToolVersionCallback("chaos-client", chaos.Version)()
 		if err != nil {
 			if opts.Verbose {
 				gologger.Error().Msgf("chaos version check failed: %v", err.Error())
 			}
 		} else {
-			gologger.Info().Msgf("Current chaos version %v %v", version, updateutils.GetVersionDescription(version, latestVersion))
+			gologger.Info().Msgf("Current chaos version %v %v", chaos.Version, updateutils.GetVersionDescription(chaos.Version, latestVersion))
 		}
 	}
+
+	// is this sdk
+	chaos.IsSDK = false
 
 	opts.validateOptions()
 
@@ -85,11 +90,15 @@ func ParseOptions() *Options {
 func (opts *Options) validateOptions() {
 	// If empty try to retrieve the key from env variables
 	if opts.APIKey == "" {
-		opts.APIKey = os.Getenv("CHAOS_KEY")
+		if chaosKey := os.Getenv("PDCP_API_KEY"); chaosKey != "" {
+			opts.APIKey = chaosKey
+		} else if chaosKey := os.Getenv("CHAOS_KEY"); chaosKey != "" {
+			opts.APIKey = chaosKey
+		}
 	}
 
 	if opts.APIKey == "" {
-		gologger.Fatal().Msgf("Authorization token not specified\n")
+		gologger.Fatal().Msgf("PDCP_API_KEY not specified\n")
 	}
 
 	if opts.Domain == "" && opts.DomainsFile == "" && !opts.hasStdin() {

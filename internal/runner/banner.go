@@ -1,6 +1,7 @@
 package runner
 
 import (
+	"github.com/projectdiscovery/chaos-client/pkg/chaos"
 	"github.com/projectdiscovery/gologger"
 	updateutils "github.com/projectdiscovery/utils/update"
 )
@@ -13,9 +14,6 @@ const banner = `
 \___/_/ /_/\__,_/\____/____/
 `
 
-// version is the current version of chaos
-const version = `0.5.1`
-
 // showBanner is used to show the banner to the user
 func showBanner() {
 	gologger.Print().Msgf("%s\n", banner)
@@ -26,6 +24,6 @@ func showBanner() {
 func GetUpdateCallback() func() {
 	return func() {
 		showBanner()
-		updateutils.GetUpdateToolCallback("chaos-client", version)()
+		updateutils.GetUpdateToolCallback("chaos-client", chaos.Version)()
 	}
 }
