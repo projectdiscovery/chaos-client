@@ -109,7 +109,7 @@ require (
 	github.com/logrusorgru/aurora v2.0.3+incompatible
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
-	github.com/projectdiscovery/ratelimit v0.0.39
+	github.com/projectdiscovery/ratelimit v0.0.42
 	github.com/projectdiscovery/utils v0.0.93
 	golang.org/x/net v0.23.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
