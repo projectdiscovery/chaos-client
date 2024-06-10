@@ -177,8 +177,8 @@ github.com/power-devops/perfstat v0.0.0-20210106213030-5aafc221ea8c h1:ncq/mPwQF
 github.com/power-devops/perfstat v0.0.0-20210106213030-5aafc221ea8c/go.mod h1:OmDBASR4679mdNQnz2pUhc2G8CO2JrUAVFDRBDP/hJE=
 github.com/projectdiscovery/blackrock v0.0.1 h1:lHQqhaaEFjgf5WkuItbpeCZv2DUIE45k0VbGJyft6LQ=
 github.com/projectdiscovery/blackrock v0.0.1/go.mod h1:ANUtjDfaVrqB453bzToU+YB4cUbvBRpLvEwoWIwlTss=
-github.com/projectdiscovery/fastdialer v0.1.0 h1:NiId7eXvYZjiBo83AnIZ6K8ZjzLJU8wGXdRLzuKcRrg=
-github.com/projectdiscovery/fastdialer v0.1.0/go.mod h1:jKOWzyHx+Q2sMiYst5HP6tWLQLDFPVgWBR72szn2h8w=
+github.com/projectdiscovery/fastdialer v0.1.1 h1:51IovI02Ime7fVCWFxMpg1akCcaRHpVQnjpTQT0+0G0=
+github.com/projectdiscovery/fastdialer v0.1.1/go.mod h1:tIMAT93FmV90EoVfM1lfaTrkNEbqT+G4jLyyoOO5McY=
 github.com/projectdiscovery/goflags v0.1.55 h1:oVx7ZhNd72g8P3MjRZTb+JmkCf6F40il75b2LrZDfWo=
 github.com/projectdiscovery/goflags v0.1.55/go.mod h1:0VWRorAiIBbOuKpbFVbwiSUfzrRsyaEI0z2nOSRT/Zg=
 github.com/projectdiscovery/gologger v1.1.12 h1:uX/QkQdip4PubJjjG0+uk5DtyAi1ANPJUvpmimXqv4A=
@@ -193,8 +193,8 @@ github.com/projectdiscovery/ratelimit v0.0.45 h1:h28oF+hJ0CHcdBZozT1Go7ppWmzTxSX
 github.com/projectdiscovery/ratelimit v0.0.45/go.mod h1:1vSJUseDS7SjNwIBi9wNRcgsMKNTLxy/GfdlLFVbgI4=
 github.com/projectdiscovery/retryabledns v1.0.62 h1:nroTEgMMfppwjwtqT5WqyfMRH8edBPsJ0tosH+5riPA=
 github.com/projectdiscovery/retryabledns v1.0.62/go.mod h1:K761GKlfiveUrN+byy7ManMpO3oHOIhTe3wVBWXxTSA=
-github.com/projectdiscovery/retryablehttp-go v1.0.63 h1:y/MpWrAO7702ybOLo/OuyAx6bZ6NJVEf85mGMAU51l8=
-github.com/projectdiscovery/retryablehttp-go v1.0.63/go.mod h1:ytE1KGi63NFAyLzWqTwZJXwjAg7apgqTnJtaZeZ4qtM=
+github.com/projectdiscovery/retryablehttp-go v1.0.64 h1:90VkUuWKm/JW5Tym0u+N1qseKe4gC5Rp048VJBLcxv8=
+github.com/projectdiscovery/retryablehttp-go v1.0.64/go.mod h1:fXVLBcwKwBrCVEgi3FrbLPtSTIczyJEKIlp1WD6VTI0=
 github.com/projectdiscovery/utils v0.1.1 h1:iQ/DyrClxbIbKMUCXfXLA1lFkqprrUM9Ti/nMU5dQj4=
 github.com/projectdiscovery/utils v0.1.1/go.mod h1:EPuSvVIvp61nXJD5EO65vaCv82OuhO+wfZpWAWA0q3o=
 github.com/quic-go/quic-go v0.42.0 h1:uSfdap0eveIl8KXnipv9K7nlwZ5IqLlYOpJ58u5utpM=
