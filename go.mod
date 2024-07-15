@@ -5,7 +5,7 @@ go 1.21
 require (
 	github.com/json-iterator/go v1.1.12
 	github.com/pkg/errors v0.9.1
-	github.com/projectdiscovery/goflags v0.1.58
+	github.com/projectdiscovery/goflags v0.1.59
 	github.com/projectdiscovery/gologger v1.1.14
 	github.com/projectdiscovery/retryablehttp-go v1.0.68
 )
@@ -30,7 +30,6 @@ require (
 	github.com/dimchansky/utfbom v1.1.1 // indirect
 	github.com/dlclark/regexp2 v1.8.1 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
-	github.com/dsnet/compress v0.0.2-0.20210315054119-f66993602bf5 // indirect
 	github.com/fatih/color v1.15.0 // indirect
 	github.com/gaissmai/bart v0.9.5 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
