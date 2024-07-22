@@ -6,8 +6,8 @@ require (
 	github.com/json-iterator/go v1.1.12
 	github.com/pkg/errors v0.9.1
 	github.com/projectdiscovery/goflags v0.1.60
-	github.com/projectdiscovery/gologger v1.1.14
-	github.com/projectdiscovery/retryablehttp-go v1.0.68
+	github.com/projectdiscovery/gologger v1.1.15
+	github.com/projectdiscovery/retryablehttp-go v1.0.69
 )
 
 require (
@@ -111,7 +111,7 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/projectdiscovery/ratelimit v0.0.48
-	github.com/projectdiscovery/utils v0.2.1
+	github.com/projectdiscovery/utils v0.2.2
 	golang.org/x/net v0.23.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 )
