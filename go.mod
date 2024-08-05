@@ -7,7 +7,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/projectdiscovery/goflags v0.1.60
 	github.com/projectdiscovery/gologger v1.1.16
-	github.com/projectdiscovery/retryablehttp-go v1.0.71
+	github.com/projectdiscovery/retryablehttp-go v1.0.72
 )
 
 require (
