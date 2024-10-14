@@ -66,6 +66,7 @@ func processDomain(client *chaos.Client, opts *Options) {
 		}
 		if opts.JSONOutput {
 			_, _ = io.Copy(opts.outputWriter, *item.Reader)
+			_, _ = fmt.Fprintln(opts.outputWriter)
 		} else {
 			if item.Subdomain != "" {
 				gologger.Silent().Msgf("%s.%s\n", item.Subdomain, opts.Domain)
