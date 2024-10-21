@@ -7,7 +7,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/projectdiscovery/goflags v0.1.64
 	github.com/projectdiscovery/gologger v1.1.27
-	github.com/projectdiscovery/retryablehttp-go v1.0.82
+	github.com/projectdiscovery/retryablehttp-go v1.0.83
 )
 
 require (
@@ -61,7 +61,7 @@ require (
 	github.com/power-devops/perfstat v0.0.0-20210106213030-5aafc221ea8c // indirect
 	github.com/projectdiscovery/blackrock v0.0.1 // indirect
 	github.com/projectdiscovery/fastdialer v0.2.9 // indirect
-	github.com/projectdiscovery/hmap v0.0.61 // indirect
+	github.com/projectdiscovery/hmap v0.0.62 // indirect
 	github.com/projectdiscovery/machineid v0.0.0-20240226150047-2e2c51e35983 // indirect
 	github.com/projectdiscovery/networkpolicy v0.0.9 // indirect
 	github.com/projectdiscovery/retryabledns v1.0.80 // indirect
