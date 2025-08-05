@@ -12,6 +12,11 @@ Chaos Client
 <a href="https://twitter.com/pdchaos"><img src="https://img.shields.io/twitter/follow/pdchaos.svg?logo=twitter"></a>
 </p>
 
+<p align="center">
+  <a href="https://github.com/projectdiscovery/chaos-client/blob/main/README.md">English</a> •
+  <a href="https://github.com/projectdiscovery/chaos-client/blob/main/README_CN.md">中文</a> •
+  <a href="https://github.com/projectdiscovery/chaos-client/blob/main/README_KR.md">한국어</a> •
+</p>
 
 ## 安装
 
@@ -82,6 +87,39 @@ kiosk-home-staging.uber.com
 
 - **这个 API 的速率限制为 60 请求 / 分钟 / ip**
 - Chaos API **只** 支持域名查询。
+
+## 将 Chaos 作为库使用
+通过实例化 `Options` 结构体并设置与 CLI 相同的参数，`Chaos` 也可以作为子域枚举库使用。
+
+### 示例
+```go
+package main
+
+import (
+	"os"
+	"github.com/projectdiscovery/chaos-client/internal/runner"
+	"github.com/projectdiscovery/chaos-client/pkg/chaos"
+)
+
+func main() {
+	var results []chaos.Result
+	opts := &runner.Options{
+		Domain: "projectdiscovery.io",
+		APIKey: os.Getenv("PDCP_API_KEY"),
+		OnResult: func(result interface{}) {
+			if val, ok := result.(chaos.Result); !ok {
+				results = append(results, val)
+			}
+		},
+	}
+
+	runner.RunEnumeration(opts)
+}
+```
+💡 提示
+
+要运行该程序，您需要将环境变量 PDCP_API_KEY 设置为您的 Chaos API 密钥。
+
 
 👨‍💻 社区
 -----
