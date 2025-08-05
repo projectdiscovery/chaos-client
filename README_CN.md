@@ -105,7 +105,7 @@ func main() {
 	var results []chaos.Result
 	opts := &runner.Options{
 		Domain: "projectdiscovery.io",
-		APIKey: os.Getenv("PDCP_API_KEY"),
+		APIKey: os.Getenv("CHAOS_KEY"),
 		OnResult: func(result interface{}) {
 			if val, ok := result.(chaos.Result); !ok {
 				results = append(results, val)
