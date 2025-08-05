@@ -118,7 +118,7 @@ func main() {
 ```
 💡 提示
 
-要运行该程序，您需要将环境变量 PDCP_API_KEY 设置为您的 Chaos API 密钥。
+要运行该程序，您需要将环境变量 CHAOS_KEY 设置为您的 Chaos API 密钥。
 
 
 👨‍💻 社区
