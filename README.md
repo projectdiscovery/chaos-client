@@ -15,7 +15,11 @@ Chaos Client
 <p align="center">
   <a href="https://github.com/projectdiscovery/chaos-client/blob/main/README.md">English</a> •
   <a href="https://github.com/projectdiscovery/chaos-client/blob/main/README_CN.md">中文</a> •
+<<<<<<< HEAD
   <a href="https://github.com/projectdiscovery/chaos-client/blob/main/README_KR.md">한국어</a> •
+=======
+  <a href="https://github.com/projectdiscovery/chaos-client/blob/main/README_KR.md">한국어</a>
+>>>>>>> b1dab78 (Create README_KR and Add content in README_CN)
 </p>
 
 ## Installation
