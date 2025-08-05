@@ -14,7 +14,8 @@ Chaos Client
 
 <p align="center">
   <a href="https://github.com/projectdiscovery/chaos-client/blob/main/README.md">English</a> •
-  <a href="https://github.com/projectdiscovery/chaos-client/blob/main/README_CN.md">中文</a> 
+  <a href="https://github.com/projectdiscovery/chaos-client/blob/main/README_CN.md">中文</a> •
+  <a href="https://github.com/projectdiscovery/chaos-client/blob/main/README_KR.md">한국어</a> •
 </p>
 
 ## Installation
