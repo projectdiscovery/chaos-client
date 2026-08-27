@@ -33,7 +33,7 @@ func RunEnumeration(opts *Options) {
 		if err != nil {
 			gologger.Fatal().Msgf("Could not create file %s for %s: %s\n", opts.Output, opts.Domain, err)
 		}
-		defer opts.outputFile.Close()
+		defer func() { _ = opts.outputFile.Close() }()
 		outputWriters = append(outputWriters, opts.outputFile)
 	}
 	opts.outputWriter = io.MultiWriter(outputWriters...)
