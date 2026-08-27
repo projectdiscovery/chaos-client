@@ -43,14 +43,14 @@ func (c *Client) do(request *retryablehttp.Request) (*http.Response, error) {
 		c.ratelimit.Take()
 	}
 	// add pdtm required metadata
-	if request.URL.Params == nil {
-		request.URL.Params = urlutil.NewOrderedParams()
+	if request.Params == nil {
+		request.Params = urlutil.NewOrderedParams()
 	}
-	request.URL.Params.Merge(updateutils.GetpdtmParams(Version))
+	request.Params.Merge(updateutils.GetpdtmParams(Version))
 	if IsSDK {
-		request.URL.Params.Add("sdk", "true")
+		request.Params.Add("sdk", "true")
 	}
-	request.URL.Update()
+	request.Update()
 
 	resp, err := c.httpClient.Do(request)
 	if resp != nil && c.ratelimit == nil {
@@ -283,7 +283,7 @@ func (c *Client) PutSubdomains(req *PutSubdomainsRequest) (*PutSubdomainsRespons
 	if err != nil {
 		return nil, errors.Wrap(err, "could not make request.")
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		body, err := io.ReadAll(resp.Body)
