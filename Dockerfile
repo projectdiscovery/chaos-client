@@ -1,5 +1,5 @@
 # Base
-FROM golang:1.25.4-alpine AS builder
+FROM golang:1.27.0-alpine AS builder
 RUN apk add --no-cache build-base
 WORKDIR /app
 COPY . /app
@@ -7,7 +7,7 @@ RUN go mod download
 RUN go build ./cmd/chaos
 
 # Release
-FROM alpine:3.22.2
+FROM alpine:3.24.1
 RUN apk -U upgrade --no-cache \
     && apk add --no-cache bind-tools ca-certificates
 COPY --from=builder /app/chaos /usr/local/bin/

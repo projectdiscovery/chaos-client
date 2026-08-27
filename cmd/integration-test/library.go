@@ -5,7 +5,7 @@ import (
 
 	"github.com/projectdiscovery/chaos-client/internal/runner"
 	"github.com/projectdiscovery/chaos-client/pkg/chaos"
-	errorutil "github.com/projectdiscovery/utils/errors"
+	"github.com/projectdiscovery/utils/errkit"
 )
 
 var libraryTestcases = map[string]TestCase{
@@ -28,7 +28,7 @@ func (h *goIntegrationTest) Execute() error {
 	}
 	runner.RunEnumeration(opts)
 	if len(got) < 1 {
-		return errorutil.New("Failed")
+		return errkit.New("failed")
 	}
 	return nil
 }
