@@ -1,4 +1,4 @@
-FROM alpine:3.24.1
+FROM alpine:latest
 
 LABEL org.opencontainers.image.authors="ProjectDiscovery"
 LABEL org.opencontainers.image.description="Go client to communicate with Chaos dataset API."
