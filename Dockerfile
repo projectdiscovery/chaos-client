@@ -1,15 +1,15 @@
-# Base
-FROM golang:1.27.0-alpine AS builder
-RUN apk add --no-cache build-base
-WORKDIR /app
-COPY . /app
-RUN go mod download
-RUN go build ./cmd/chaos
-
-# Release
 FROM alpine:3.24.1
+
+LABEL org.opencontainers.image.authors="ProjectDiscovery"
+LABEL org.opencontainers.image.description="Go client to communicate with Chaos dataset API."
+LABEL org.opencontainers.image.licenses="MIT"
+LABEL org.opencontainers.image.title="chaos-client"
+LABEL org.opencontainers.image.url="https://github.com/projectdiscovery/chaos-client"
+
 RUN apk -U upgrade --no-cache \
     && apk add --no-cache bind-tools ca-certificates
-COPY --from=builder /app/chaos /usr/local/bin/
+
+ARG TARGETPLATFORM
+COPY $TARGETPLATFORM/chaos-client /usr/local/bin/chaos
 
 ENTRYPOINT ["chaos"]
