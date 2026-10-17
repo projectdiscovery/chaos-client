@@ -89,33 +89,30 @@ kiosk-home-staging.uber.com
 - Chaos API **only** supports domain name to query.
 
 ## Chaos as a library
-`Chaos` can be utilized as a library for subdomain enumeration by instantiating the `Options` struct and populating it with the same options that would be specified via CLI.
+`Chaos` can be utilized as a library for subdomain enumeration via the public `pkg/chaos` package.
 
 ### Example
 ```go
 package main
 
 import (
+	"fmt"
 	"os"
-	"github.com/projectdiscovery/chaos-client/internal/runner"
+
 	"github.com/projectdiscovery/chaos-client/pkg/chaos"
 )
 
 func main() {
-	var results []chaos.Result
-	opts := &runner.Options{
+	client := chaos.New(os.Getenv("CHAOS_KEY"))
+	for result := range client.GetSubdomains(&chaos.SubdomainsRequest{
 		Domain: "projectdiscovery.io",
-		APIKey: os.Getenv("CHAOS_KEY"),
-		OnResult: func(result interface{}) {
-			if val, ok := result.(chaos.Result); !ok {
-				results = append(results, val)
-			}
-		},
+	}) {
+		if result.Error != nil {
+			panic(result.Error)
+		}
+		fmt.Println(result.Subdomain)
 	}
-
-	runner.RunEnumeration(opts)
 }
-
 ```
 💡 Note
 

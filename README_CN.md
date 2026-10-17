@@ -89,31 +89,29 @@ kiosk-home-staging.uber.com
 - Chaos API **只** 支持域名查询。
 
 ## 将 Chaos 作为库使用
-通过实例化 `Options` 结构体并设置与 CLI 相同的参数，`Chaos` 也可以作为子域枚举库使用。
+通过公共的 `pkg/chaos` 包，`Chaos` 也可以作为子域枚举库使用。
 
 ### 示例
 ```go
 package main
 
 import (
+	"fmt"
 	"os"
-	"github.com/projectdiscovery/chaos-client/internal/runner"
+
 	"github.com/projectdiscovery/chaos-client/pkg/chaos"
 )
 
 func main() {
-	var results []chaos.Result
-	opts := &runner.Options{
+	client := chaos.New(os.Getenv("CHAOS_KEY"))
+	for result := range client.GetSubdomains(&chaos.SubdomainsRequest{
 		Domain: "projectdiscovery.io",
-		APIKey: os.Getenv("CHAOS_KEY"),
-		OnResult: func(result interface{}) {
-			if val, ok := result.(chaos.Result); !ok {
-				results = append(results, val)
-			}
-		},
+	}) {
+		if result.Error != nil {
+			panic(result.Error)
+		}
+		fmt.Println(result.Subdomain)
 	}
-
-	runner.RunEnumeration(opts)
 }
 ```
 💡 提示
