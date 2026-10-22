@@ -5,6 +5,7 @@ on:
     paths:
       - '**.go'
       - '**.mod'
+      - '.github/workflows/build-test.yml'
   workflow_dispatch:
 
 jobs:
