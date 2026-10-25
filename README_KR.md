@@ -89,33 +89,30 @@ kiosk-home-staging.uber.com
 - Chaos API는 **도메인 이름 기반 조회만 지원**합니다.
 
 ## 라이브러리로 사용하기
-`Chaos`는 CLI뿐 아니라 라이브러리 형태로도 사용 가능합니다. `Options` 구조체를 통해 동일한 방식으로 설정 후 호출합니다.
+`Chaos`는 CLI뿐 아니라 공개된 `pkg/chaos` 패키지를 통해 라이브러리 형태로도 사용 가능합니다.
 
 ### 예제 코드
 ```go
 package main
 
 import (
+	"fmt"
 	"os"
-	"github.com/projectdiscovery/chaos-client/internal/runner"
+
 	"github.com/projectdiscovery/chaos-client/pkg/chaos"
 )
 
 func main() {
-	var results []chaos.Result
-	opts := &runner.Options{
+	client := chaos.New(os.Getenv("CHAOS_KEY"))
+	for result := range client.GetSubdomains(&chaos.SubdomainsRequest{
 		Domain: "projectdiscovery.io",
-		APIKey: os.Getenv("CHAOS_KEY"),
-		OnResult: func(result interface{}) {
-			if val, ok := result.(chaos.Result); !ok {
-				results = append(results, val)
-			}
-		},
+	}) {
+		if result.Error != nil {
+			panic(result.Error)
+		}
+		fmt.Println(result.Subdomain)
 	}
-
-	runner.RunEnumeration(opts)
 }
-
 ```
 💡 주의
 

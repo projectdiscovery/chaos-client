@@ -3,7 +3,6 @@ package main
 import (
 	"os"
 
-	"github.com/projectdiscovery/chaos-client/internal/runner"
 	"github.com/projectdiscovery/chaos-client/pkg/chaos"
 	"github.com/projectdiscovery/utils/errkit"
 )
@@ -17,16 +16,17 @@ type goIntegrationTest struct{}
 // Execute executes a test case and returns an error if occurred
 func (h *goIntegrationTest) Execute() error {
 	var got []string
-	opts := &runner.Options{
+	client := chaos.New(os.Getenv("CHAOS_KEY"))
+	for result := range client.GetSubdomains(&chaos.SubdomainsRequest{
 		Domain: "projectdiscovery.io",
-		APIKey: os.Getenv("CHAOS_KEY"),
-		OnResult: func(result interface{}) {
-			if val, ok := result.(chaos.Result); !ok {
-				got = append(got, val.Subdomain)
-			}
-		},
+	}) {
+		if result.Error != nil {
+			return result.Error
+		}
+		if result.Subdomain != "" {
+			got = append(got, result.Subdomain)
+		}
 	}
-	runner.RunEnumeration(opts)
 	if len(got) < 1 {
 		return errkit.New("failed")
 	}
