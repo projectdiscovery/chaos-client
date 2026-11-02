@@ -2,6 +2,7 @@ package runner
 
 import (
 	"bufio"
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -65,7 +66,7 @@ func processDomain(client *chaos.Client, opts *Options) {
 			opts.OnResult(item)
 		}
 		if opts.JSONOutput {
-			_, _ = io.Copy(opts.outputWriter, *item.Reader)
+			writeJSONLine(opts.outputWriter, *item.Reader)
 		} else {
 			if item.Subdomain != "" {
 				gologger.Silent().Msgf("%s.%s\n", item.Subdomain, opts.Domain)
@@ -79,6 +80,13 @@ func processDomain(client *chaos.Client, opts *Options) {
 			}
 		}
 	}
+}
+
+// writeJSONLine writes one JSON value followed by a single newline.
+func writeJSONLine(w io.Writer, r io.Reader) {
+	var buf bytes.Buffer
+	_, _ = io.Copy(&buf, r)
+	_, _ = fmt.Fprintf(w, "%s\n", bytes.TrimRight(buf.Bytes(), "\r\n"))
 }
 
 func processBBQDomain(client *chaos.Client, opts *Options) {
@@ -97,7 +105,7 @@ func processBBQDomain(client *chaos.Client, opts *Options) {
 		}
 		var bbqdata chaos.BBQData
 		if opts.JSONOutput {
-			_, _ = io.Copy(opts.outputWriter, *item.Reader)
+			writeJSONLine(opts.outputWriter, *item.Reader)
 		} else {
 			if err := json.Unmarshal(item.Data, &bbqdata); err != nil {
 				gologger.Error().Msgf("Could not unmarshal response: %s\n", err)
