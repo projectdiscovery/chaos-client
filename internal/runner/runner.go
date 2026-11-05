@@ -68,18 +68,25 @@ func processDomain(client *chaos.Client, opts *Options) {
 		if opts.JSONOutput {
 			writeJSONLine(opts.outputWriter, *item.Reader)
 		} else {
-			if item.Subdomain != "" {
-				gologger.Silent().Msgf("%s.%s\n", item.Subdomain, opts.Domain)
-			}
-			if opts.Output != "" {
-				_, err := fmt.Fprintf(opts.outputWriter, "%s.%s\n", item.Subdomain, opts.Domain)
-				if err != nil {
-					gologger.Error().Msgf("Could not write results to file %s for %s: %s\n", opts.Output, opts.Domain, err)
-					break
-				}
+			if err := writeSubdomain(opts, item.Subdomain); err != nil {
+				gologger.Error().Msgf("Could not write results to file %s for %s: %s\n", opts.Output, opts.Domain, err)
+				break
 			}
 		}
 	}
+}
+
+// writeSubdomain prints a subdomain to stdout and, when an output file is set, writes it to that file.
+func writeSubdomain(opts *Options, subdomain string) error {
+	if subdomain != "" {
+		gologger.Silent().Msgf("%s.%s\n", subdomain, opts.Domain)
+	}
+	if opts.Output != "" {
+		// stdout already got the line above, so write to the file only
+		_, err := fmt.Fprintf(opts.outputFile, "%s.%s\n", subdomain, opts.Domain)
+		return err
+	}
+	return nil
 }
 
 // writeJSONLine writes one JSON value followed by a single newline.
